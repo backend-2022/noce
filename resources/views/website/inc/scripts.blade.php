@@ -33,20 +33,20 @@
         if (contactForm && typeof $ !== 'undefined' && typeof ajaxRequest !== 'undefined') {
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 const form = $(this);
                 const formData = new FormData(this);
                 const submitButton = form.find('button[type="submit"]');
                 const originalButtonText = submitButton.html();
-                
+
                 // Show loading state
                 submitButton.prop('disabled', true);
                 submitButton.html('جاري الإرسال...');
-                
+
                 // Clear previous validation errors
                 form.find('.is-invalid').removeClass('is-invalid');
                 form.find('.error-container').remove();
-                
+
                 ajaxRequest({
                     url: form.attr('action'),
                     type: form.attr('method'),
@@ -62,7 +62,7 @@
                                     rtl: true
                                 });
                             }
-                            
+
                             // Show custom success message element
                             const successMessage = document.getElementById('successMessage');
                             if (successMessage) {
@@ -71,7 +71,7 @@
                                     successMessage.classList.remove('show');
                                 }, 5000);
                             }
-                            
+
                             // Reset form
                             contactForm[0].reset();
                         }
@@ -81,7 +81,7 @@
                         if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                             const errors = xhr.responseJSON.errors;
                             let errorMessages = [];
-                            
+
                             // Collect all error messages
                             Object.keys(errors).forEach(function(field) {
                                 if (Array.isArray(errors[field])) {
@@ -91,26 +91,26 @@
                                 } else {
                                     errorMessages.push(errors[field]);
                                 }
-                                
+
                                 // Mark field as invalid
                                 const input = form.find('[name="' + field + '"]');
                                 if (input.length) {
                                     input.addClass('is-invalid');
-                                    
+
                                     // Add error message below field
-                                    const errorContainer = $('<div class="error-container"><span class="error-message text-danger" style="font-size:0.875rem;">' + 
-                                        (Array.isArray(errors[field]) ? errors[field][0] : errors[field]) + 
+                                    const errorContainer = $('<div class="error-container"><span class="error-message text-danger" style="font-size:0.875rem;">' +
+                                        (Array.isArray(errors[field]) ? errors[field][0] : errors[field]) +
                                         '</span></div>');
                                     input.closest('.form-group').append(errorContainer);
                                 }
                             });
-                            
+
                             // Show all errors in toastr
                             if (errorMessages.length > 0) {
                                 const errorText = errorMessages.join('<br>');
                                 console.log('Showing validation errors:', errorText);
                                 console.log('Toastr available:', typeof toastr !== 'undefined');
-                                
+
                                 // Always try to show in toastr first
                                 if (typeof toastr !== 'undefined' && typeof toastr.error === 'function') {
                                     toastr.error(errorText, 'خطأ في التحقق', {
@@ -130,13 +130,13 @@
                             }
                         } else {
                             // Handle other errors
-                            const errorMessage = xhr.responseJSON?.message || 
-                                                xhr.responseJSON?.error || 
+                            const errorMessage = xhr.responseJSON?.message ||
+                                                xhr.responseJSON?.error ||
                                                 'حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.';
-                            
+
                             console.log('Showing error:', errorMessage);
                             console.log('Toastr available:', typeof toastr !== 'undefined');
-                            
+
                             // Always try to show in toastr first
                             if (typeof toastr !== 'undefined' && typeof toastr.error === 'function') {
                                 toastr.error(errorMessage, 'خطأ', {
@@ -162,41 +162,11 @@
                     }
                 });
             });
-            
+
             // Clear validation errors when user interacts with fields
             contactForm.find('input, select, textarea').on('input change', function() {
                 $(this).removeClass('is-invalid');
                 $(this).closest('.form-group').find('.error-container').remove();
-            });
-        }
-
-        // Appointment Form Handler
-        const appointmentForm = document.getElementById('appointmentForm');
-        if (appointmentForm) {
-            appointmentForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const appointmentData = {
-                    fullname: this.fullname.value,
-                    mobile: this.mobile.value,
-                    email: this.email2.value,
-                    date: this.date.value,
-                    time: this.time.value,
-                    notes: this.notes.value
-                };
-
-                console.log('Appointment Data:', appointmentData);
-
-                const appointmentSuccess = document.getElementById('appointmentSuccess');
-                if (appointmentSuccess) {
-                    appointmentSuccess.classList.add('show');
-                }
-                this.reset();
-
-                setTimeout(() => {
-                    if (appointmentSuccess) {
-                        appointmentSuccess.classList.remove('show');
-                    }
-                }, 5000);
             });
         }
 

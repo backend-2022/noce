@@ -8,8 +8,6 @@
 <body>
     <div class="page_content">
 
-        {{-- @include('website.layouts.navbar') --}}
-
         @yield('content')
 
         @include('website.layouts.footer')

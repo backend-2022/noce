@@ -77,15 +77,6 @@ trait ManagesSiteText
         return $configs[$type->value] ?? [];
     }
 
-    public function showSiteText(SiteTextEnum $type): View
-    {
-        $config = $this->getSiteTextConfig($type);
-        $siteText = $this->siteTextRepository->findByType($type);
-
-        return view('dashboard.pages.site-text.manage', compact('siteText', 'config', 'type'));
-    }
-
-
     protected function supportsMultipleRecords(SiteTextEnum $type): bool
     {
         $multiRecordTypes = [

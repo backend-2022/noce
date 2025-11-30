@@ -21,15 +21,6 @@
                         </div>
                         <span class="hide_span">عرض اقل</span>
                     </button>
-                    <!-- active route -->
-                    <!-- <li class="sidebar-list {{ isActiveRoute('dashboard.dashboard') }}">
-                        <a class="sidebar-link sidebar-title link-nav {{ isActiveRoute('dashboard.dashboard') }}" href="{{ route('dashboard.dashboard') }}">
-                            <div class="img_div">
-                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/1.png') }}" alt="">
-                            </div>
-                            <span class="hide_span">الرئيسية</span>
-                        </a>
-                    </li> -->
 
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.cities.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.cities.') }}" href="{{ route('dashboard.cities.index') }}">
@@ -70,16 +61,6 @@
                         </a>
 
                     </li>
-
-                    <!-- <li class="sidebar-list {{ (request()->route()?->getName() === 'dashboard.site-text.show' && request()->route('type') === 'home_banner') ? 'active' : '' }}">
-                        <a class="sidebar-link sidebar-title link-nav {{ (request()->route()?->getName() === 'dashboard.site-text.show' && request()->route('type') === 'home_banner') ? 'active' : '' }}"
-                            href="{{ route('dashboard.site-text.show', 'home_banner') }}">
-                            <div class="img_div">
-                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
-                            </div>
-                            <span class="hide_span">بانر الرئيسية</span>
-                        </a>
-                    </li> -->
 
                 </div>
 

@@ -47,9 +47,4 @@ class SiteTextController extends Controller
 
         return $siteTexts;
     }
-
-    public function getByType(SiteTextEnum $type)
-    {
-        return $this->siteTextRepository->findByType($type);
-    }
 }

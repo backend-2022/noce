@@ -31,7 +31,6 @@ class SiteTextController extends Controller
             SiteTextEnum::HOW_WORK => $this->showHowWork($siteTextType, $config, $type),
             SiteTextEnum::FEATURES => $this->showFeatures($siteTextType, $config, $type),
             SiteTextEnum::INCREASE_PROFITS => $this->showIncreaseProfits($siteTextType, $config, $type),
-            default => $this->showSiteText($siteTextType),
         };
     }
 
