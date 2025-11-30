@@ -12,7 +12,8 @@
                 <div class="success-message" id="successMessage">
                     تم إرسال طلبك بنجاح! سنتواصل معك قريباً
                 </div>
-                <form id="contactForm">
+                <form id="contactForm" action="{{ route('free-design.store') }}" method="POST">
+                    @csrf
                     <div class="form-group">
                         <label> الاسم الكامل </label>
                         <input type="text" name="name" placeholder="الاسم الكامل" required>
@@ -27,24 +28,21 @@
                     </div>
                     <div class="form-group">
                         <label>اختر المدينه </label>
-                        <select name="service" required>
+                        <select name="city_id" required>
                             <option value="">اختر المدينه </option>
-                            <option value="residential"> جدة </option>
-                            <option value="commercial"> الرياض</option>
-                            <option value="office"> القصيم</option>
-                            <option value="consultation"> المدينة المنورة </option>
+                            @foreach($cities as $city)
+                                <option value="{{ $city->id }}">{{ $city->name }}</option>
+                            @endforeach
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>اختر الخدمة</label>
-
-                        <select name="service" required>
+                        <select name="service_id" required>
                             <option value="">نوع الخدمة</option>
-                            <option value="residential">تصميم سكني</option>
-                            <option value="commercial">تصميم تجاري</option>
-                            <option value="office">تصميم مكاتب</option>
-                            <option value="consultation">استشارة</option>
+                            @foreach($services as $service)
+                                <option value="{{ $service->id }}">{{ $service->name }}</option>
+                            @endforeach
                         </select>
                     </div>
 
