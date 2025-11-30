@@ -9,14 +9,13 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         $this->call([
             AdminSeeder::class,
             SettingsSeeder::class,
+            CitiesSeeder::class,
+            ServicesSeeder::class,
         ]);
     }
 }

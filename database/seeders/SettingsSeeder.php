@@ -14,15 +14,15 @@ class SettingsSeeder extends Seeder
         $settings = [
             [
                 'key' => 'site_name',
-                'value' => ' NOCE - نوتش ',
+                'value' => 'NOCE - نوتش',
             ],
             [
                 'key' => 'promotional_title',
-                'value' => 'نظام إدارة الجداول والمواعيد',
+                'value' => 'صمم مساحتك معانا',
             ],
             [
                 'key' => 'description',
-                'value' => 'جدولها هو نظام متطور لإدارة الجداول والمواعيد، مصمم لتبسيط عملية تنظيم الوقت وإدارة المواعيد بكفاءة عالية.',
+                'value' => 'نحول أحلامك إلى واقع من خلال تصميمات داخلية مبتكرة وعصرية',
             ],
 
             // Social Media Settings
