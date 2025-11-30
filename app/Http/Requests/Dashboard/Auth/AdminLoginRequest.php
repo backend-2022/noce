@@ -14,7 +14,7 @@ class AdminLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => InputEnum::EMAIL->getValidationRules(true),
+            'email' => InputEnum::EMAIL->getValidationRules(true) . '|regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
             'password' => 'required|min:6',
         ];
     }
@@ -25,6 +25,7 @@ class AdminLoginRequest extends FormRequest
             'email.required' => 'حقل البريد الإلكتروني مطلوب.',
             'email.email' => 'البريد الإلكتروني يجب أن يكون صحيح.',
             'email.max' => 'البريد الإلكتروني لا يجب أن يتجاوز 255 حرف.',
+            'email.regex' => 'يجب أن يكون بصيغة صحيحة example@example.com',
             'password.required' => 'حقل كلمة المرور مطلوب.',
             'password.min' => 'كلمة المرور يجب أن تكون على الأقل 6 أحرف.',
         ];

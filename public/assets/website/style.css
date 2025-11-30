@@ -454,6 +454,32 @@ label {
     color: #000;
     text-align: right;
 }
+
+/* Validation Error Styles */
+.form-group input.is-invalid,
+.form-group select.is-invalid,
+.form-group textarea.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #fff5f5;
+}
+
+.form-group input.is-invalid:focus,
+.form-group select.is-invalid:focus,
+.form-group textarea.is-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.error-container {
+    margin-top: 5px;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    display: block;
+    text-align: right;
+}
 @media (max-width: 1200px) {
     .hero-content {
         padding: 20px;

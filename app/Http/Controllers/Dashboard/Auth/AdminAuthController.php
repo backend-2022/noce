@@ -25,12 +25,26 @@ class AdminAuthController extends Controller
         $admin = Admin::where('email', $request->email)->first();
 
         if (!$admin) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'البريد الإلكتروني غير مسجل',
+                    'errors' => ['email' => 'البريد الإلكتروني غير مسجل']
+                ], 422);
+            }
             return redirect()->back()
                 ->withErrors(['email' => 'البريد الإلكتروني غير مسجل'])
                 ->withInput($request->except('password'));
         }
 
         if (!$admin->is_active) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'حسابك غير مفعل',
+                    'errors' => ['email' => 'حسابك غير مفعل']
+                ], 422);
+            }
             return redirect()->back()
                 ->withErrors(['email' => 'حسابك غير مفعل'])
                 ->withInput($request->except('password'));
@@ -39,8 +53,24 @@ class AdminAuthController extends Controller
         if (Auth::guard('admin')->attempt($request->only('email', 'password'), $request->filled('remember'))) {
             $request->session()->regenerate();
 
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'مرحباً بك ' . $admin->name,
+                    'redirect' => route('dashboard.dashboard')
+                ]);
+            }
+
             return redirect()->intended(route('dashboard.dashboard'))
                 ->with('success', 'مرحباً بك ' . $admin->name);
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'كلمة المرور غير صحيحة',
+                'errors' => ['password' => 'كلمة المرور غير صحيحة']
+            ], 422);
         }
 
         return redirect()->back()
