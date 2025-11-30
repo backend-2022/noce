@@ -69,7 +69,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::patch('/cities/{city}/toggle-status', [CityController::class, 'toggleStatus'])->name('cities.toggle-status');
 
         // Services Routes (إدارة الخدمات)
-        Route::get('services', [ServiceController::class, 'index'])->name('services.index');
+        Route::resource('services', ServiceController::class);
+        Route::patch('/services/{service}/toggle-status', [ServiceController::class, 'toggleStatus'])->name('services.toggle-status');
 
         // Free Designs Routes (إدارة الخدمات المجانية)
         Route::get('free-designs', [FreeDesignController::class, 'index'])->name('free-designs.index');
