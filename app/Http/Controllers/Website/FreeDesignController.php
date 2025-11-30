@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Website;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Website\StoreFreeDesignRequest;
-use App\Models\FreeDesign;
+use App\Repositories\Interfaces\FreeDesignRepositoryInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Exception;
@@ -12,6 +12,13 @@ use Exception;
 class FreeDesignController extends Controller
 {
     use ApiResponse;
+
+    protected FreeDesignRepositoryInterface $freeDesignRepository;
+
+    public function __construct(FreeDesignRepositoryInterface $freeDesignRepository)
+    {
+        $this->freeDesignRepository = $freeDesignRepository;
+    }
 
     public function store(StoreFreeDesignRequest $request): JsonResponse
     {
@@ -26,8 +33,8 @@ class FreeDesignController extends Controller
             // Set default status to pending
             $data['status'] = 'pending';
 
-            // Create the free design request
-            $freeDesign = FreeDesign::create($data);
+            // Create the free design request using repository
+            $freeDesign = $this->freeDesignRepository->create($data);
 
             return $this->successResponse(
                 ['id' => $freeDesign->id],
