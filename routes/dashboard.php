@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\Auth\AdminAuthController;
-use App\Http\Controllers\Dashboard\SiteText\SiteTextController;
 use App\Http\Controllers\Dashboard\Setting\SettingController;
 use App\Http\Controllers\Dashboard\Profile\ProfileController;
 use App\Http\Controllers\Dashboard\Admins\AdminController;
@@ -46,16 +45,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
         // Logout route
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
-
-        // Site Text routes
-        Route::prefix('site-text')->name('site-text.')->group(function () {
-            Route::get('{type}', [SiteTextController::class, 'show'])
-                ->where('type', 'home_banner|how_work|features|increase_profits')
-                ->name('show');
-            Route::post('{type}/update', [SiteTextController::class, 'update'])
-                ->where('type', 'home_banner|how_work|features|increase_profits')
-                ->name('update');
-        });
 
         // Settings Routes
         Route::prefix('settings')->name('settings.')->group(function () {
