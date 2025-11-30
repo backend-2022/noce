@@ -3,65 +3,155 @@
 namespace App\Http\Controllers\Dashboard\Cities;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Dashboard\City\CreateCityRequest;
+use App\Http\Requests\Dashboard\City\UpdateCityRequest;
 use App\Models\City;
+use App\Repositories\Interfaces\CityRepositoryInterface;
+use App\Traits\ApiResponse;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class CityController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): View
+    use ApiResponse;
+
+    protected CityRepositoryInterface $cityRepository;
+
+    public function __construct(CityRepositoryInterface $cityRepository)
     {
+        $this->cityRepository = $cityRepository;
+    }
+
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = City::query()->orderBy('updated_at', 'desc');
+
+            return DataTables::of($query)
+                ->filter(function ($query) use ($request) {
+                    $searchValue = $request->input('search.value');
+                    if (!empty($searchValue)) {
+                        $query->where(function ($builder) use ($searchValue) {
+                            $builder->where('name', 'like', '%' . $searchValue . '%')
+                                ->orWhere('id', 'like', '%' . $searchValue . '%');
+                        });
+                    }
+                }, true)
+                ->addColumn('name', fn (City $city) => '<span class="span_styles">' . e($city->name) . '</span>')
+                ->addColumn('created_at', fn (City $city) => '<span class="span_styles">' . optional($city->created_at)->format('Y-m-d H:i') . '</span>')
+                ->addColumn('status', function (City $city) {
+                    $inputId = 'flexSwitchCheckChecked' . $city->id;
+
+                    $form = '<form method="POST" action="' . e(route('dashboard.cities.toggle-status', $city)) . '" style="display:inline;">'
+                        . csrf_field()
+                        . method_field('PATCH')
+                        . '<div class="form-check form-switch">
+                                <input class="form-check-input check_styles" type="checkbox" role="switch" id="' . e($inputId) . '" ' . ($city->is_active ? 'checked' : '') . ' onchange="this.form.submit()">
+                            </div>
+                        </form>';
+
+                    return $form;
+                })
+                ->addColumn('actions', function (City $city) {
+                    $buttons = '<div class="btns-table">
+                                    <a href="' . e(route('dashboard.cities.edit', $city)) . '" class="btn_styles amendment">
+                                        <i class="fa fa-edit"></i>
+                                        تعديل
+                                    </a>
+                                    <a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.cities.destroy', $city)) . '" data-city-name="' . e($city->name) . '">
+                                        <i class="fa fa-trash"></i>
+                                        حذف
+                                    </a>
+                                </div>';
+
+                    return $buttons;
+                })
+                ->rawColumns(['name', 'created_at', 'status', 'actions'])
+                ->make(true);
+        }
+
         return view('dashboard.pages.cities.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('dashboard.pages.cities.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(CreateCityRequest $request)
     {
-        //
+        try {
+            $data = $request->validated();
+            $data['is_active'] = $request->has('is_active') ? true : false;
+
+            $this->cityRepository->create($data);
+
+            return redirect()->route('dashboard.cities.index')->with('success', 'تم إضافة المدينة بنجاح');
+        } catch (Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'حدث خطأ أثناء إضافة المدينة');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(City $city)
     {
-        //
+        return abort(404);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(City $city)
     {
-        //
+        return view('dashboard.pages.cities.edit', compact('city'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateCityRequest $request, City $city)
     {
-        //
+        try {
+            $data = $request->validated();
+            $data['is_active'] = $request->has('is_active') ? true : false;
+
+            $this->cityRepository->update($city->id, $data);
+
+            return redirect()->route('dashboard.cities.index')->with('success', 'تم تحديث المدينة بنجاح');
+        } catch (Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'حدث خطأ أثناء تحديث المدينة');
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Request $request, City $city)
     {
-        //
+        try {
+            $this->cityRepository->delete($city->id);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return $this->deletedResponse('تم حذف المدينة بنجاح');
+            }
+
+            return redirect()->route('dashboard.cities.index')->with('success', 'تم حذف المدينة بنجاح');
+        } catch (Exception $e) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return $this->errorResponse('حدث خطأ أثناء حذف المدينة', 500);
+            }
+
+            return redirect()->route('dashboard.cities.index')
+                ->with('error', 'حدث خطأ أثناء حذف المدينة');
+        }
+    }
+
+    public function toggleStatus(City $city)
+    {
+        try {
+            $this->cityRepository->update($city->id, ['is_active' => ! $city->is_active]);
+
+            $status = $city->is_active ? 'تم إلغاء تفعيل المدينة' : 'تم تفعيل المدينة';
+
+            return redirect()->route('dashboard.cities.index')->with('success', $status);
+        } catch (Exception $e) {
+            return redirect()->route('dashboard.cities.index')
+                ->with('error', 'حدث خطأ أثناء تغيير حالة المدينة');
+        }
     }
 }

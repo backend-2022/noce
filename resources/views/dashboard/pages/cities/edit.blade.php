@@ -1,0 +1,64 @@
+@extends('dashboard.layouts.app')
+
+@section('pageTitle', 'تعديل المدينة')
+
+@section('content')
+    <div class="inner-body user_information">
+        <form id="updateCityForm" action="{{ route('dashboard.cities.update', $city) }}" method="POST" autocomplete="off">
+            @csrf
+            @method('PUT')
+
+            <div class="row">
+                <!-- Name -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <label class="label_style" for="name">اسم المدينة <span class="text-danger">*</span></label>
+                        <input type="text" id="name" name="name"
+                            class="form-control" value="{{ old('name', $city->name) }}"
+                            placeholder="أدخل اسم المدينة"
+                            autocomplete="off"
+                            data-lpignore="true">
+                        @error('name')
+                            <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Is Active -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input check_styles" type="checkbox" role="switch" id="is_active" name="is_active"
+                                value="1" {{ old('is_active', $city->is_active) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_active">
+                                تفعيل المدينة
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="submit" class="save_informations" id="submitBtn">
+                <img src="{{ asset('assets/dashboard/images/correct_wihte.png') }}">
+                <span class="button-text">تحديث المدينة</span>
+            </button>
+        </form>
+    </div>
+@endsection
+
+@push('js')
+    <script>
+        $(document).ready(function() {
+            // Initialize form submission handler
+            if (typeof handleFormSubmission === 'function') {
+                handleFormSubmission('#updateCityForm', {
+                    successMessage: 'تم تحديث المدينة بنجاح',
+                    errorMessage: 'حدث خطأ أثناء تحديث المدينة',
+                    redirectUrl: '{{ route('dashboard.cities.index') }}',
+                    redirectImmediately: true
+                });
+            }
+        });
+    </script>
+@endpush

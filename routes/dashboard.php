@@ -65,8 +65,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::put('/social-media', [SettingController::class, 'updateSocialMedia'])->name('social-media.update');
         });
 
-        // Cities Routes (إدارة المدن)
-        Route::get('cities', [CityController::class, 'index'])->name('cities.index');
+        Route::resource('cities', CityController::class);
+        Route::patch('/cities/{city}/toggle-status', [CityController::class, 'toggleStatus'])->name('cities.toggle-status');
 
         // Services Routes (إدارة الخدمات)
         Route::get('services', [ServiceController::class, 'index'])->name('services.index');
