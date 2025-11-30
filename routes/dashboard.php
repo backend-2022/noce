@@ -35,7 +35,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::middleware('auth.admin')->group(function () {
         // Dashboard route
         Route::get('/', function () {
-            return view('dashboard.pages.dashboard');
+            return redirect()->route('dashboard.free-designs.index');
         })->name('dashboard');
 
         // Profile routes

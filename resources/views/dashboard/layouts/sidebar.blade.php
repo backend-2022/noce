@@ -1,8 +1,7 @@
 <div class="sidebar-wrapper">
     <div class="logo-wrapper">
         <a href="{{ route('dashboard.dashboard') }}">
-            <img class="clock_img" src="{{ asset('assets/dashboard/images/clock.png') }}">
-
+           <h1>{{ setting('site_name') ?? 'NOCE - نوتش' }}</h1>
         </a>
         <div class="back-btn"><i class="fa fa-times-circle"></i>
 
