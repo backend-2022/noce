@@ -8,7 +8,7 @@
               @php
                   $facebook = setting('facebook');
                   $instagram = setting('instagram');
-                  $twitter = setting('twitter');
+                  $twitter = setting('x');
                   $snapchat = setting('snapchat');
                   $whatsapp = setting('whatsapp');
                   $whatsappUrl = $whatsapp ? 'https://wa.me/' . preg_replace('/[^0-9]/', '', $whatsapp) . '?text=' . urlencode('مرحباً، أرغب في الاستفسار عن خدمات التصميم الداخلي') : null;
