@@ -9,7 +9,7 @@
 
     <!-- Loader starts-->
     <div class="loader-wrapper">
-        <img class="loader_img" src="{{ asset('assets/dashboard/images/logo.svg') }}" alt="">
+        <span class="loader"></span>
     </div>
 
     <div class="tap-top"><i class="fa fa-chevron-up"></i></div>
