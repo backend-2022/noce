@@ -1,23 +1,78 @@
 <script>
     // Contact Form Handler
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = {
-            name: this.name.value,
-            email: this.email.value,
-            phone: this.phone.value,
-            service: this.service.value
-        };
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton ? submitButton.innerHTML : '';
+            
+            // Disable submit button
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'جاري الإرسال...';
+            }
 
-        console.log('Contact Form Data:', formData);
+            // Get form data
+            const formData = new FormData(this);
 
-        document.getElementById('successMessage').classList.add('show');
-        this.reset();
+            // Send AJAX request
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(async response => {
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    // Handle validation errors
+                    if (data.errors) {
+                        let errorMessage = 'يرجى تصحيح الأخطاء التالية:\n';
+                        Object.keys(data.errors).forEach(key => {
+                            errorMessage += `- ${data.errors[key][0]}\n`;
+                        });
+                        alert(errorMessage);
+                    } else {
+                        alert(data.message || 'حدث خطأ أثناء إرسال الطلب');
+                    }
+                    return;
+                }
 
-        setTimeout(() => {
-            document.getElementById('successMessage').classList.remove('show');
-        }, 5000);
-    });
+                if (data.success) {
+                    // Show success message
+                    const successMessage = document.getElementById('successMessage');
+                    if (successMessage) {
+                        successMessage.classList.add('show');
+                        setTimeout(() => {
+                            successMessage.classList.remove('show');
+                        }, 5000);
+                    }
+                    
+                    // Reset form
+                    this.reset();
+                } else {
+                    // Show error message
+                    alert(data.message || 'حدث خطأ أثناء إرسال الطلب');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.');
+            })
+            .finally(() => {
+                // Re-enable submit button
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                }
+            });
+        });
+    }
 
     // Appointment Form Handler
     document.getElementById('appointmentForm').addEventListener('submit', function(e) {
