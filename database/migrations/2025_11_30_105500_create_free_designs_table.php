@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('phone', 20);
             $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('service_id')->nullable();
-            $table->enum('status', ['pending', 'in_progress', 'completed', 'cancelled'])->default('pending');
-            $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

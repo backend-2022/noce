@@ -17,12 +17,6 @@ class FreeDesign extends Model
         'phone',
         'city_id',
         'service_id',
-        'status',
-        'notes',
-    ];
-
-    protected $casts = [
-        'status' => 'string',
     ];
 
     public function city(): BelongsTo
