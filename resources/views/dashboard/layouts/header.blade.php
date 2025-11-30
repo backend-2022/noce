@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <div class="left_side">
+        <!-- <div class="left_side">
             <ul class="nav-menus">
 
                 <li class="light_dark_section">
@@ -97,6 +97,6 @@
 
                 </li>
             </ul>
-        </div>
+        </div> -->
     </div>
 </div>

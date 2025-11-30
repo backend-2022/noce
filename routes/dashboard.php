@@ -74,6 +74,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
         // Free Designs Routes (إدارة الخدمات المجانية)
         Route::get('free-designs', [FreeDesignController::class, 'index'])->name('free-designs.index');
+        Route::delete('free-designs/{freeDesign}', [FreeDesignController::class, 'destroy'])->name('free-designs.destroy');
 
         // Admins Routes
         Route::delete('/admins/bulk-destroy', [AdminController::class, 'bulkDestroy'])->name('admins.bulk-destroy');
