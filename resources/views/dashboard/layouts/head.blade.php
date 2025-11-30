@@ -1,6 +1,6 @@
 
 <title>
-    @yield('title', 'جدولها | لوحة التحكم')
+    @yield('title', setting('site_name') ?? 'NOCE - نوتش' . ' | لوحة التحكم')
 </title>
 
 @include('dashboard.inc.metas')
