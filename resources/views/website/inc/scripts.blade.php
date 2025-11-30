@@ -72,8 +72,22 @@
                                 }, 5000);
                             }
                             
-                            // Reset form
-                            contactForm[0].reset();
+                            // Clear all form data
+                            form[0].reset();
+                            
+                            // Clear all input fields explicitly
+                            form.find('input[type="text"]').val('');
+                            form.find('input[type="email"]').val('');
+                            form.find('input[type="tel"]').val('');
+                            
+                            // Reset all select dropdowns to first option
+                            form.find('select').each(function() {
+                                $(this).val('').trigger('change');
+                            });
+                            
+                            // Clear any remaining validation errors
+                            form.find('.is-invalid').removeClass('is-invalid');
+                            form.find('.error-container').remove();
                         }
                     },
                     error: function(xhr) {
