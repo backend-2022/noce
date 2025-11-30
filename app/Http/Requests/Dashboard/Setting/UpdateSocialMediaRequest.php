@@ -15,23 +15,22 @@ class UpdateSocialMediaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'twitter' => InputEnum::URL->getValidationRules(false),
             'facebook' => InputEnum::URL->getValidationRules(false),
+            'x' => InputEnum::URL->getValidationRules(false),
             'instagram' => InputEnum::URL->getValidationRules(false),
             'snapchat' => InputEnum::URL->getValidationRules(false),
-            'tiktok' => InputEnum::URL->getValidationRules(false),
+            'whatsapp' => InputEnum::PHONE->getValidationRules(false),
         ];
     }
 
     public function messages(): array
     {
         return [
-            'twitter.url' => 'رابط تويتر يجب أن يكون رابط صحيح',
-            'twitter.max' => 'رابط تويتر يجب أن لا يتجاوز 255 حرف',
-
-
             'facebook.url' => 'رابط فيسبوك يجب أن يكون رابط صحيح',
             'facebook.max' => 'رابط فيسبوك يجب أن لا يتجاوز 255 حرف',
+
+            'x.url' => 'رابط X يجب أن يكون رابط صحيح',
+            'x.max' => 'رابط X يجب أن لا يتجاوز 255 حرف',
 
             'instagram.url' => 'رابط انستجرام يجب أن يكون رابط صحيح',
             'instagram.max' => 'رابط انستجرام يجب أن لا يتجاوز 255 حرف',
@@ -39,19 +38,20 @@ class UpdateSocialMediaRequest extends FormRequest
             'snapchat.url' => 'رابط سناب شات يجب أن يكون رابط صحيح',
             'snapchat.max' => 'رابط سناب شات يجب أن لا يتجاوز 255 حرف',
 
-            'tiktok.url' => 'رابط التيك توك يجب أن يكون رابط صحيح',
-            'tiktok.max' => 'رابط التيك توك يجب أن لا يتجاوز 255 حرف',
+            'whatsapp.required' => 'رقم الواتساب مطلوب',
+            'whatsapp.string' => 'رقم الواتساب يجب أن يكون نص',
+            'whatsapp.regex' => 'رقم الواتساب يجب أن يبدأ بـ 5 ويحتوي على 9 أرقام فقط',
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'twitter' => 'رابط تويتر',
             'facebook' => 'رابط فيسبوك',
+            'x' => 'رابط X',
             'instagram' => 'رابط انستجرام',
             'snapchat' => 'رابط سناب شات',
-            'tiktok' => 'رابط التيك توك',
+            'whatsapp' => 'رقم الواتساب',
         ];
     }
 }

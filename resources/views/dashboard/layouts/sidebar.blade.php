@@ -1,7 +1,6 @@
 <div class="sidebar-wrapper">
     <div class="logo-wrapper">
         <a href="{{ route('dashboard.dashboard') }}">
-            <img class="img-fluid for-light" src="{{ getFileFullUrl(setting('logo_light'), null, 'public', 'logo.svg') }}" alt="">
             <img class="clock_img" src="{{ asset('assets/dashboard/images/clock.png') }}">
 
         </a>

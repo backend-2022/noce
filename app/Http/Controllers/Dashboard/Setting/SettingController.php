@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\Setting\UpdateGeneralSettingRequest;
 use App\Http\Requests\Dashboard\Setting\UpdateSocialMediaRequest;
 use App\Repositories\Interfaces\SettingRepositoryInterface;
-use App\Models\Setting;
-use App\Traits\FileUploads;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -15,8 +13,6 @@ use Exception;
 
 class SettingController extends Controller
 {
-    use FileUploads;
-
     protected SettingRepositoryInterface $settingRepository;
 
     public function __construct(SettingRepositoryInterface $settingRepository)
@@ -53,27 +49,10 @@ class SettingController extends Controller
         try {
             $settings = $request->except(['_token', '_method']);
 
-            $files = ['logo_dark', 'logo_light'];
-
-            foreach ($files as $fileKey) {
-                if ($request->hasFile($fileKey)) {
-                    // Delete old file if exists
-                    $oldSetting = $this->settingRepository->getByKey($fileKey);
-                    if ($oldSetting && $oldSetting->value) {
-                        $this->deleteFile($oldSetting->value, null, 'public');
-                    }
-
-                    $uploadedFile = $request->file($fileKey);
-                    $path = $this->uploadFile($uploadedFile, null, Setting::$STORAGE_DIR, 'public');
-                    $settings[$fileKey] = $path;
-                }
-            }
-
             foreach ($settings as $key => $value) {
-                // Only save non-null values
-                if ($value !== null) {
-                    $this->settingRepository->createOrUpdate($key, $value);
-                }
+                // Convert empty strings to null to clear old data
+                $value = $value === '' ? null : $value;
+                $this->settingRepository->createOrUpdate($key, $value);
             }
 
             // Get updated settings for response
@@ -114,10 +93,15 @@ class SettingController extends Controller
             $settings = $request->except(['_token', '_method']);
 
             foreach ($settings as $key => $value) {
-                // Only save non-null values
-                if ($value !== null) {
-                    $this->settingRepository->createOrUpdate($key, $value);
+                // Convert empty strings to null to clear old data
+                $value = $value === '' ? null : $value;
+
+                // Convert whatsapp number to string if it's numeric
+                if ($key === 'whatsapp' && $value !== null) {
+                    $value = (string) $value;
                 }
+
+                $this->settingRepository->createOrUpdate($key, $value);
             }
 
             // Get updated settings for response

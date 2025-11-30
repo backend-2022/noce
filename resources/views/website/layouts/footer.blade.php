@@ -1,7 +1,7 @@
   <!-- Footer -->
   <footer>
       <div class="footer-content">
-          <div class="footer-brand"> NOCE - نوتش </div>
+          <div class="footer-brand"> {{ setting('site_name') ?? 'NOCE - نوتش' }} </div>
           <p>نصمم أحلامك بلمسات فنية مميزة</p>
 
           <div class="social-links">
@@ -68,7 +68,7 @@
           </div>
 
           <div class="footer-bottom">
-              <p>&copy; 2025 جميع الحقوق محفوظة - شركة ( NOCE- نوتش) للتصاميم الداخلية</p>
+              <p>&copy; 2025 جميع الحقوق محفوظة - شركة ( {{ setting('site_name') ?? 'NOCE - نوتش' }} ) للتصاميم الداخلية</p>
           </div>
       </div>
   </footer>

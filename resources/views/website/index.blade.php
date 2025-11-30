@@ -4,8 +4,8 @@
     <section class="hero">
         <div class="hero-content fade-in">
             <div class="contetn_hero">
-                <h1>صمم مساحتك معانا</h1>
-                <p>نحول أحلامك إلى واقع من خلال تصميمات داخلية مبتكرة وعصرية</p>
+                <h1>{{ setting('promotional_title') ?? 'صمم مساحتك معانا' }}</h1>
+                <p>{{ setting('description') ?? 'نحول أحلامك إلى واقع من خلال تصميمات داخلية مبتكرة وعصرية' }}</p>
             </div>
 
             <div class="contact-form">

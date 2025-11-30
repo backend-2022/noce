@@ -25,16 +25,16 @@
                     </div>
                 </div>
 
-                <!-- Twitter -->
+                <!-- X (Twitter) -->
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-3">
                     <div class="div_input_label">
-                        <label class="label_style" for="twitter">رابط تويتر</label>
+                        <label class="label_style" for="x">رابط X (تويتر)</label>
                         <input type="text"
-                               id="twitter"
-                               name="twitter"
+                               id="x"
+                               name="x"
                                class="form-control"
-                               value="{{ old('twitter', $settings['twitter'] ?? '') }}"
-                               placeholder="https://www.twitter.com">
+                               value="{{ old('x', $settings['x'] ?? '') }}"
+                               placeholder="https://www.x.com">
                     </div>
                 </div>
 
@@ -64,16 +64,16 @@
                     </div>
                 </div>
 
-                <!-- TikTok -->
+                <!-- WhatsApp -->
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-3">
                     <div class="div_input_label">
-                        <label class="label_style" for="tiktok">رابط التيك توك</label>
+                        <label class="label_style" for="whatsapp">رقم الواتساب</label>
                         <input type="text"
-                               id="tiktok"
-                               name="tiktok"
+                               id="whatsapp"
+                               name="whatsapp"
                                class="form-control"
-                               value="{{ old('tiktok', $settings['tiktok'] ?? '') }}"
-                               placeholder="https://www.tiktok.com">
+                               value="{{ old('whatsapp', $settings['whatsapp'] ?? '') }}"
+                               placeholder="5xxxxxxxx">
                     </div>
                 </div>
             </div>
