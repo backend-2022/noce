@@ -15,7 +15,7 @@ class CreateCityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => InputEnum::TITLE->getValidationRules() . '|regex:/^[\p{Arabic}a-zA-Z0-9\s]+$/u|unique:cities,name',
+            'name' => InputEnum::TITLE->getValidationRules() .'|unique:cities,name',
             'is_active' => 'boolean',
         ];
     }
