@@ -49,6 +49,11 @@ class SettingController extends Controller
         try {
             $settings = $request->except(['_token', '_method']);
 
+            // Handle keep_backups toggle
+            if (!isset($settings['keep_backups'])) {
+                $settings['keep_backups'] = '0';
+            }
+
             foreach ($settings as $key => $value) {
                 // Convert empty strings to null to clear old data
                 $value = $value === '' ? null : $value;
