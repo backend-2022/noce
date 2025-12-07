@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Repositories\Interfaces\ServiceRepositoryInterface;
 use App\Traits\ApiResponse;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -125,15 +126,43 @@ class ServiceController extends Controller
         }
     }
 
-    public function destroy(Request $request, Service $service)
+    public function destroy(Request $request, $service)
     {
         try {
-            $this->serviceRepository->delete($service->id);
+            // Check if the model exists (including soft-deleted ones)
+            // Handle case where user clicks delete multiple times quickly
+            // $service parameter is the ID from route (not using route model binding to avoid errors on already-deleted records)
+            $serviceModel = Service::withTrashed()->find($service);
+
+            // If model doesn't exist at all, it was already deleted
+            if (!$serviceModel) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return $this->deletedResponse('تم حذف الخدمة بنجاح');
+                }
+                return redirect()->route('dashboard.services.index')->with('success', 'تم حذف الخدمة بنجاح');
+            }
+
+            // If already soft-deleted, return success
+            if ($serviceModel->trashed()) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return $this->deletedResponse('تم حذف الخدمة بنجاح');
+                }
+                return redirect()->route('dashboard.services.index')->with('success', 'تم حذف الخدمة بنجاح');
+            }
+
+            // Delete the model
+            $this->serviceRepository->delete($serviceModel->id);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف الخدمة بنجاح');
             }
 
+            return redirect()->route('dashboard.services.index')->with('success', 'تم حذف الخدمة بنجاح');
+        } catch (ModelNotFoundException $e) {
+            // Model was already deleted, return success
+            if ($request->ajax() || $request->wantsJson()) {
+                return $this->deletedResponse('تم حذف الخدمة بنجاح');
+            }
             return redirect()->route('dashboard.services.index')->with('success', 'تم حذف الخدمة بنجاح');
         } catch (Exception $e) {
             if ($request->ajax() || $request->wantsJson()) {

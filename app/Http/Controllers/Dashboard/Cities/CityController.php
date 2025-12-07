@@ -9,6 +9,7 @@ use App\Models\City;
 use App\Repositories\Interfaces\CityRepositoryInterface;
 use App\Traits\ApiResponse;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -124,15 +125,43 @@ class CityController extends Controller
         }
     }
 
-    public function destroy(Request $request, City $city)
+    public function destroy(Request $request, $city)
     {
         try {
-            $this->cityRepository->delete($city->id);
+            // Check if the model exists (including soft-deleted ones)
+            // Handle case where user clicks delete multiple times quickly
+            // $city parameter is the ID from route (not using route model binding to avoid errors on already-deleted records)
+            $cityModel = City::withTrashed()->find($city);
+
+            // If model doesn't exist at all, it was already deleted
+            if (!$cityModel) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return $this->deletedResponse('تم حذف المدينة بنجاح');
+                }
+                return redirect()->route('dashboard.cities.index')->with('success', 'تم حذف المدينة بنجاح');
+            }
+
+            // If already soft-deleted, return success
+            if ($cityModel->trashed()) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return $this->deletedResponse('تم حذف المدينة بنجاح');
+                }
+                return redirect()->route('dashboard.cities.index')->with('success', 'تم حذف المدينة بنجاح');
+            }
+
+            // Delete the model
+            $this->cityRepository->delete($cityModel->id);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف المدينة بنجاح');
             }
 
+            return redirect()->route('dashboard.cities.index')->with('success', 'تم حذف المدينة بنجاح');
+        } catch (ModelNotFoundException $e) {
+            // Model was already deleted, return success
+            if ($request->ajax() || $request->wantsJson()) {
+                return $this->deletedResponse('تم حذف المدينة بنجاح');
+            }
             return redirect()->route('dashboard.cities.index')->with('success', 'تم حذف المدينة بنجاح');
         } catch (Exception $e) {
             if ($request->ajax() || $request->wantsJson()) {
