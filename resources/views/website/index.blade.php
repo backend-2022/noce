@@ -15,8 +15,8 @@
                 <form id="contactForm" action="{{ route('free-design.store') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label> الاسم الكامل <span class="required">*</span></label>
-                        <input type="text" name="name" placeholder="الاسم الكامل">
+                        <label> الاسم كامل <span class="required">*</span></label>
+                        <input type="text" name="name" placeholder="الاسم كامل">
                     </div>
                     <div class="form-group">
                         <label> البريد الألكتروني <span class="required">*</span></label>

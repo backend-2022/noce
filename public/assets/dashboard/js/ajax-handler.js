@@ -914,13 +914,17 @@ function applyImagePreviewStyling(previewImg, uploadDiv, uploadText = null, defa
             uploadDiv.style.background = "none";
             uploadDiv.style.border = "none";
             uploadDiv.style.padding = "0";
+            uploadDiv.style.width = "max-content";
+            uploadDiv.style.margin = "auto";
         }
+
         previewImg.style.width = "150px";
         previewImg.style.height = "150px";
         previewImg.style.objectFit = "cover";
         previewImg.style.display = "block";
     }
 }
+
 
 function setupImageUpload(uploadDivId, inputId, previewImgId, uploadTextId, defaultImageName = 'white_img.png') {
     const uploadDiv = document.getElementById(uploadDivId);

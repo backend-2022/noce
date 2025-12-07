@@ -76,7 +76,7 @@
 
                     </li>
 
-                    <li class="sidebar-list">
+                    <li class="sidebar-list ">
                         <form action="{{ route('dashboard.logout') }}" method="POST" style="display: inline;">
                             @csrf
                             <button type="submit" class="sidebar-link sidebar-title link-nav logout_bg" style="border: none; background: none; width: 100%; text-align: right; padding: 0;">

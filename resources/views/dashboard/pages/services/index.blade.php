@@ -16,7 +16,7 @@
             </div>
 
             <div class="table-responsive">
-                <table id="services-table" class="table table-bordered tabel_style w-100"
+                <table id="services-table" class="table table-bordered tabel_style w-100 description_style"
                     data-url="{{ route('dashboard.services.index') }}">
                     <thead>
                         <tr>
