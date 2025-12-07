@@ -26,7 +26,7 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Service::query()->orderBy('updated_at', 'desc');
+            $query = Service::query()->orderBy('created_at', 'desc');
 
             return DataTables::of($query)
                 ->filter(function ($query) use ($request) {
@@ -39,8 +39,8 @@ class ServiceController extends Controller
                         });
                     }
 
-                    // Ensure order by updated_at desc (newest first) is always applied
-                    $query->orderBy('updated_at', 'desc');
+                    // Ensure order by created_at desc (newest first) is always applied
+                    $query->orderBy('created_at', 'desc');
                 }, true)
                 ->addColumn('name', fn (Service $service) => '<span class="span_styles">' . e($service->name) . '</span>')
                 ->addColumn('description', fn (Service $service) => '<span class="span_styles">' . e($service->description ?? '-') . '</span>')

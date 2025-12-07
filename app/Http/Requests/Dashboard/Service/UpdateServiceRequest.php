@@ -17,7 +17,7 @@ class UpdateServiceRequest extends FormRequest
         $serviceId = $this->route('service')->id;
 
         return [
-            'name' => InputEnum::TITLE->getValidationRules() . '|regex:/^[\p{Arabic}a-zA-Z0-9\s]+$/u|unique:services,name,' . $serviceId,
+            'name' => InputEnum::TITLE->getValidationRules() . '|unique:services,name,' . $serviceId,
             'description' => InputEnum::DESCRIPTION->getValidationRules(false),
             'is_active' => 'boolean',
         ];
@@ -30,7 +30,6 @@ class UpdateServiceRequest extends FormRequest
             'name.string' => 'الاسم يجب أن يكون نص.',
             'name.min' => 'الاسم يجب أن يكون على الأقل 3 أحرف.',
             'name.max' => 'الاسم لا يجب أن يتجاوز 255 حرف.',
-            'name.regex' => 'الاسم يجب أن يحتوي على حروف عربية أو إنجليزية وأرقام ومسافات فقط.',
             'name.unique' => 'اسم الخدمة مستخدم مسبقاً.',
 
             'description.string' => 'الوصف يجب أن يكون نص.',

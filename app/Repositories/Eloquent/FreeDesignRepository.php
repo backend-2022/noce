@@ -49,6 +49,11 @@ class FreeDesignRepository implements FreeDesignRepositoryInterface
     {
         $freeDesign = $this->model->find($id);
         if ($freeDesign) {
+            // Update the email with timestamp before soft deleting to avoid unique constraint issues
+            $timestamp = time();
+            $freeDesign->email = $freeDesign->email . '-' . $timestamp;
+            $freeDesign->save();
+
             return $freeDesign->delete();
         }
         return false;
@@ -61,4 +66,3 @@ class FreeDesignRepository implements FreeDesignRepositoryInterface
             ->get();
     }
 }
-

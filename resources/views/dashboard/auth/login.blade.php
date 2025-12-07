@@ -19,7 +19,7 @@
                         <label for="password">كلمة المرور</label>
                         <input type="password" name="password" id="password" placeholder="كلمة المرور">
                     </div>
-                    <button type="submit" class="btn-submit">
+                    <button type="submit" class="btn-submit" id="loginSubmitBtn">
                         <span class="button-text">تسجيل الدخول</span>
                     </button>
                 </form>
@@ -31,6 +31,54 @@
 @push('js')
     <script>
         $(document).ready(function() {
+            const loginForm = $('#loginForm');
+            const emailInput = $('#email');
+            const passwordInput = $('#password');
+            const submitButton = $('#loginSubmitBtn');
+
+            // Function to check if both fields are filled
+            function checkFormValidity() {
+                const emailValue = emailInput.val().trim();
+                const passwordValue = passwordInput.val().trim();
+                const bothFilled = emailValue !== '' && passwordValue !== '';
+
+                // Update button state
+                submitButton.prop('disabled', !bothFilled);
+                if (bothFilled) {
+                    submitButton.css({
+                        'opacity': '1',
+                        'cursor': 'pointer'
+                    });
+                } else {
+                    submitButton.css({
+                        'opacity': '0.6',
+                        'cursor': 'not-allowed'
+                    });
+                }
+            }
+
+            // Set initial disabled state
+            submitButton.prop('disabled', true);
+            submitButton.css({
+                'opacity': '0.6',
+                'cursor': 'not-allowed'
+            });
+
+            // Listen to input events on both fields
+            emailInput.on('input keyup', checkFormValidity);
+            passwordInput.on('input keyup', checkFormValidity);
+
+            // Prevent form submission if fields are not filled
+            loginForm.on('submit', function(e) {
+                const emailValue = emailInput.val().trim();
+                const passwordValue = passwordInput.val().trim();
+
+                if (emailValue === '' || passwordValue === '') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
             // Initialize form submission handler
             if (typeof handleFormSubmission === 'function') {
                 handleFormSubmission('#loginForm', {

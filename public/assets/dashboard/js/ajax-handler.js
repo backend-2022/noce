@@ -464,6 +464,7 @@ function handleFormSubmission(formSelector, options = {}) {
         errorMessage: "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى.",
         redirectUrl: null,
         redirectImmediately: false, // If true, redirect immediately after showing toast without waiting
+        showSuccessToast: true, // If false, don't show success toast
         beforeSubmit: null, // Function to call before submission
         afterSubmit: null, // Function to call after submission
     };
@@ -532,25 +533,44 @@ function handleFormSubmission(formSelector, options = {}) {
                 // Get redirect URL
                 const redirectUrl = response.data?.redirect || response.redirect || config.redirectUrl;
 
-                // If redirectImmediately is true, show toast and redirect immediately
-                if (config.redirectImmediately && redirectUrl) {
-                    showSuccessAlert(config.successMessage);
-                    setTimeout(function() {
-                        window.location.href = redirectUrl;
-                    }, 100);
-                } else {
-                    // Default behavior: wait for toast to close before redirecting
-                    showSuccessAlert(config.successMessage, function () {
-                        if (redirectUrl) {
+                // Show success toast only if showSuccessToast is true
+                if (config.showSuccessToast) {
+                    // If redirectImmediately is true, show toast and redirect immediately
+                    if (config.redirectImmediately && redirectUrl) {
+                        showSuccessAlert(config.successMessage);
+                        setTimeout(function() {
                             window.location.href = redirectUrl;
-                        }
-                    });
+                        }, 100);
+                    } else {
+                        // Default behavior: wait for toast to close before redirecting
+                        showSuccessAlert(config.successMessage, function () {
+                            if (redirectUrl) {
+                                window.location.href = redirectUrl;
+                            }
+                        });
+                    }
+                } else {
+                    // If not showing toast, redirect immediately if needed
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                    }
                 }
             },
             error: function (xhr) {
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     // Check if there are general errors (not field-specific)
                     const errors = xhr.responseJSON.errors;
+
+                    // If errors object is empty, show message in toastr
+                    if (Object.keys(errors).length === 0) {
+                        const serverMessage =
+                            xhr.responseJSON?.message ||
+                            xhr.responseJSON?.error ||
+                            config.errorMessage;
+                        showErrorAlert(serverMessage);
+                        return;
+                    }
+
                     const generalErrors = [];
                     const fieldErrors = {};
 
@@ -959,6 +979,18 @@ function setupImageUpload(uploadDivId, inputId, previewImgId, uploadTextId, defa
             if (!file.type.match('image.*')) {
                 if (typeof showErrorAlert === 'function') {
                     showErrorAlert('الملف المحدد ليس صورة');
+                }
+                this.value = '';
+                return;
+            }
+
+            // Validate file size using value from PHP enum
+            const maxSizeKB = window.IMAGE_MAX_SIZE_KB || 2048; // Fallback to 2048 if not defined
+            const maxSizeBytes = maxSizeKB * 1024;
+            const maxSizeMB = (maxSizeKB / 1024).toFixed(2);
+            if (file.size > maxSizeBytes) {
+                if (typeof showErrorAlert === 'function') {
+                    showErrorAlert('حجم الصورة يجب أن لا يتجاوز ' + (' ' + maxSizeMB + ' ميجابايت'));
                 }
                 this.value = '';
                 return;

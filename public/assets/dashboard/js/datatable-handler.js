@@ -81,6 +81,7 @@ function initDataTable(
             [10, 25, 50, -1],
             [10, 25, 50, "الكل"],
         ],
+        ordering: false, // ✅ Disable column ordering - headers are not clickable
         order: [],
         dom: domLayout, // ✅ Use the conditional DOM layout
         searchDelay: 500, // Delay search by 500ms after user stops typing
