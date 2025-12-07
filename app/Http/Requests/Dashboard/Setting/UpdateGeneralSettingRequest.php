@@ -20,6 +20,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'site_name' => InputEnum::TITLE->getValidationRules(),
             'promotional_title' => InputEnum::TITLE->getValidationRules(),
             'description' => InputEnum::DESCRIPTION->getValidationRules(),
+            'keep_backups' => 'nullable|in:1',
         ];
     }
 

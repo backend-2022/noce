@@ -46,6 +46,10 @@ class SettingsSeeder extends Seeder
                 'key' => 'whatsapp',
                 'value' => '5xxxxxxxx',
             ],
+            [
+                'key' => 'keep_backups',
+                'value' => '0',
+            ],
         ];
 
         foreach ($settings as $setting) {
