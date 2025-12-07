@@ -4,6 +4,7 @@ namespace App\Http\Requests\Dashboard\Setting;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\InputsValidationEnums\InputEnum;
+use App\Enums\MimesValidationEnums\IconMimesValidationEnum;
 
 class UpdateGeneralSettingRequest extends FormRequest
 {
@@ -21,12 +22,15 @@ class UpdateGeneralSettingRequest extends FormRequest
             'promotional_title' => InputEnum::TITLE->getValidationRules(),
             'description' => InputEnum::DESCRIPTION->getValidationRules(),
             'keep_backups' => 'nullable|in:1',
+            'logo' => 'nullable|' . IconMimesValidationEnum::validationRule(),
         ];
     }
 
     public function messages(): array
     {
-        return [
+        $logoMessages = IconMimesValidationEnum::getValidationMessages('logo');
+
+        return array_merge([
             'site_name.required' => 'اسم الموقع مطلوب',
             'site_name.string' => 'اسم الموقع يجب أن يكون نص',
             'site_name.max' => 'اسم الموقع يجب أن لا يتجاوز 255 حرف',
@@ -41,7 +45,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'description.string' => 'نبذة عن الموقع يجب أن يكون نص',
             'description.max' => 'نبذة عن الموقع يجب أن لا يتجاوز 1000 حرف',
             'description.min' => 'نبذة عن الموقع يجب أن يكون على الأقل 3 أحرف',
-        ];
+        ], $logoMessages);
     }
 
 
@@ -51,6 +55,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'site_name' => 'اسم الموقع',
             'promotional_title' => 'العنوان الترويجي',
             'description' => 'نبذة عن الموقع',
+            'logo' => 'الشعار',
         ];
     }
 }
