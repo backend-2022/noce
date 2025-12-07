@@ -28,7 +28,7 @@ class FreeDesignController extends Controller
     {
         if ($request->ajax()) {
             $query = $this->freeDesignRepository->buildQueryWithRelations()
-                ->orderBy('updated_at', 'desc');
+                ->orderBy('created_at', 'desc');
 
             return DataTables::of($query)
                 ->filter(function ($query) use ($request) {

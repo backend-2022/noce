@@ -20,14 +20,14 @@ class StoreFreeDesignRequest extends FormRequest
             'email' => InputEnum::EMAIL->getValidationRules(true),
             'phone' => 'required|string|regex:/^(0)?5\d{8}$/',
             'city_id' => [
-                'nullable',
+                'required',
                 'integer',
                 Rule::exists('cities', 'id')->where(function ($query) {
                     $query->where('is_active', true);
                 }),
             ],
             'service_id' => [
-                'nullable',
+                'required',
                 'integer',
                 Rule::exists('services', 'id')->where(function ($query) {
                     $query->where('is_active', true);
@@ -53,9 +53,11 @@ class StoreFreeDesignRequest extends FormRequest
             'phone.string' => 'رقم الجوال يجب أن يكون نص.',
             'phone.regex' => 'رقم الجوال يجب أن يكون بصيغة 05xxxxxxxx أو 5xxxxxxxx.',
 
+            'city_id.required' => 'حقل المدينة مطلوب.',
             'city_id.integer' => 'المدينة المختارة غير صحيحة.',
             'city_id.exists' => 'المدينة المختارة غير موجودة أو غير نشطة.',
 
+            'service_id.required' => 'حقل الخدمة مطلوب.',
             'service_id.integer' => 'الخدمة المختارة غير صحيحة.',
             'service_id.exists' => 'الخدمة المختارة غير موجودة أو غير نشطة.',
         ];
@@ -72,4 +74,3 @@ class StoreFreeDesignRequest extends FormRequest
         ];
     }
 }
-

@@ -26,7 +26,7 @@ class CityController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = City::query()->orderBy('updated_at', 'desc');
+            $query = City::query()->orderBy('created_at', 'desc');
 
             return DataTables::of($query)
                 ->filter(function ($query) use ($request) {
@@ -37,6 +37,9 @@ class CityController extends Controller
                                 ->orWhere('id', 'like', '%' . $searchValue . '%');
                         });
                     }
+
+                    // Ensure order by created_at desc (newest first) is always applied
+                    $query->orderBy('created_at', 'desc');
                 }, true)
                 ->addColumn('name', fn (City $city) => '<span class="span_styles">' . e($city->name) . '</span>')
                 ->addColumn('created_at', fn (City $city) => '<span class="span_styles">' . optional($city->created_at)->format('Y-m-d H:i') . '</span>')

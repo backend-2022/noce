@@ -27,7 +27,7 @@ class AdminController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Admin::query();
+            $query = Admin::query()->orderBy('created_at', 'desc');
 
             return DataTables::of($query)
                 ->filter(function ($query) use ($request) {
@@ -39,6 +39,9 @@ class AdminController extends Controller
                                 ->orWhere('id', 'like', '%' . $searchValue . '%');
                         });
                     }
+
+                    // Ensure order by created_at desc (newest first) is always applied
+                    $query->orderBy('created_at', 'desc');
                 }, true)
                 ->addColumn('select', function (Admin $admin) {
                     $inputId = 'flexCheckDefault' . $admin->id;

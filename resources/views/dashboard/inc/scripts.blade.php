@@ -4,6 +4,10 @@
 <script src="{{ asset('assets/dashboard/js/toastr.min.js') }}?v={{ file_exists(public_path('assets/dashboard/js/toastr.min.js')) ? filemtime(public_path('assets/dashboard/js/toastr.min.js')) : time() }}"></script>
 <!-- SweetAlert2 -->
 <script src="{{ asset('assets/dashboard/js/swal.js') }}?v={{ file_exists(public_path('assets/dashboard/js/swal.js')) ? filemtime(public_path('assets/dashboard/js/swal.js')) : time() }}"></script>
+<script>
+  // Image validation constants from PHP enum
+  window.IMAGE_MAX_SIZE_KB = {{ \App\Enums\MimesValidationEnums\ImageMimesValidationEnum::MAX_IMAGE_SIZE_KB }};
+</script>
 <script src="{{ asset('assets/dashboard/js/ajax-handler.js') }}?v={{ file_exists(public_path('assets/dashboard/js/ajax-handler.js')) ? filemtime(public_path('assets/dashboard/js/ajax-handler.js')) : time() }}" data-cfasync="false"></script>
 <script src="{{ asset('assets/dashboard/js/phone-codes.js') }}?v={{ file_exists(public_path('assets/dashboard/js/phone-codes.js')) ? filemtime(public_path('assets/dashboard/js/phone-codes.js')) : time() }}" data-cfasync="false"></script>
 <script src="{{ asset('assets/dashboard/js/bootstrap/bootstrap.bundle.min.js') }}?v={{ file_exists(public_path('assets/dashboard/js/bootstrap/bootstrap.bundle.min.js')) ? filemtime(public_path('assets/dashboard/js/bootstrap/bootstrap.bundle.min.js')) : time() }}"></script>
@@ -31,5 +35,7 @@
   window.datatableArabicLangUrl = "{{ asset('assets/dashboard/js/datatable/ar.json') }}";
 </script>
 <script src="{{ asset('assets/dashboard/js/script.js') }}?v={{ file_exists(public_path('assets/dashboard/js/script.js')) ? filemtime(public_path('assets/dashboard/js/script.js')) : time() }}"></script>
+<!-- Input Maxlength Handler -->
+<script src="{{ asset('assets/dashboard/js/input-maxlength.js') }}?v={{ file_exists(public_path('assets/dashboard/js/input-maxlength.js')) ? filemtime(public_path('assets/dashboard/js/input-maxlength.js')) : time() }}"></script>
 
 @stack('js')

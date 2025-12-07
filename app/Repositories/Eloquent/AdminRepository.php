@@ -49,7 +49,16 @@ class AdminRepository implements AdminRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return $this->model->where('id', $id)->delete();
+        $admin = $this->model->find($id);
+        if ($admin) {
+            // Update the email with timestamp before soft deleting to avoid unique constraint issues
+            $timestamp = time();
+            $admin->email = $admin->email . '-' . $timestamp;
+            $admin->save();
+
+            return $admin->delete();
+        }
+        return false;
     }
 
     public function updatePassword(int $id, string $password): bool

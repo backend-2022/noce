@@ -39,6 +39,11 @@ class ServiceRepository implements ServiceRepositoryInterface
     {
         $service = $this->model->find($id);
         if ($service) {
+            // Update the name with timestamp before soft deleting to avoid unique constraint issues
+            $timestamp = time();
+            $service->name = $service->name . '-' . $timestamp;
+            $service->save();
+
             return $service->delete();
         }
         return false;
