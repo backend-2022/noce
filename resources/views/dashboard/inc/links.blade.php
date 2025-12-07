@@ -1,4 +1,4 @@
-<link rel="shortcut icon" href="{{ asset('assets/dashboard/images/clock.png') }}" type="image/x-icon">
+{{-- <link rel="shortcut icon" href="{{ asset('assets/dashboard/images/clock.png') }}" type="image/x-icon"> --}}
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/dashboard/css/vendors/font-awesome.css') }}?v={{ file_exists(public_path('assets/dashboard/css/vendors/font-awesome.css')) ? filemtime(public_path('assets/dashboard/css/vendors/font-awesome.css')) : time() }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/dashboard/css/vendors/themify.css') }}?v={{ file_exists(public_path('assets/dashboard/css/vendors/themify.css')) ? filemtime(public_path('assets/dashboard/css/vendors/themify.css')) : time() }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/dashboard/css/vendors/scrollbar.css') }}?v={{ file_exists(public_path('assets/dashboard/css/vendors/scrollbar.css')) ? filemtime(public_path('assets/dashboard/css/vendors/scrollbar.css')) : time() }}">
@@ -15,4 +15,5 @@
 <!-- SweetAlert2 CSS -->
 <link rel="stylesheet" href="{{ asset('assets/dashboard/css/sweetalert2.min.css') }}?v={{ file_exists(public_path('assets/dashboard/css/sweetalert2.min.css')) ? filemtime(public_path('assets/dashboard/css/sweetalert2.min.css')) : time() }}">
 
+<link rel="shortcut icon" href="{{ getFileFullUrl(setting('logo'), null, 'public', 'favicon.ico') }}" type="image/x-icon">
 @stack('css')

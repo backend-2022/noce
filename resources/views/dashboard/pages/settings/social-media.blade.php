@@ -5,6 +5,7 @@
         <div class="contentt mb-4">
             <a class="ref_settings" href="{{ route('dashboard.settings.index') }}">عام</a>
             <a class="ref_settings active" href="{{ route('dashboard.settings.social-media.index') }}">روابط التواصل الاجتماعي</a>
+            <a class="ref_settings" href="{{ route('dashboard.settings.seo.index') }}">بيانات SEO</a>
         </div>
 
         <form id="socialMediaForm" action="{{ route('dashboard.settings.social-media.update') }}" method="POST" autocomplete="off">

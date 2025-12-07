@@ -53,6 +53,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::put('/', [SettingController::class, 'update'])->name('update');
             Route::get('/social-media', [SettingController::class, 'socialMediaIndex'])->name('social-media.index');
             Route::put('/social-media', [SettingController::class, 'updateSocialMedia'])->name('social-media.update');
+            Route::get('/seo', [SettingController::class, 'seoIndex'])->name('seo.index');
+            Route::put('/seo', [SettingController::class, 'updateSeo'])->name('seo.update');
         });
 
         Route::resource('cities', CityController::class);
