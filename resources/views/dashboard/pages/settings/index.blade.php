@@ -50,6 +50,24 @@
                     </div>
                 </div>
 
+                <!-- Keep Backups Toggle -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input check_styles rounded-pill"
+                                   type="checkbox"
+                                   role="switch"
+                                   name="keep_backups"
+                                   value="1"
+                                   id="keep_backups_toggle"
+                                   {{ old('keep_backups', $settings['keep_backups'] ?? '') == '1' ? 'checked' : '' }} />
+                            <label class="form-check-label" for="keep_backups_toggle">
+                                 الاحتفاظ بالنسخ الاحتياطية القديمة
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <button type="submit" class="save_informations" id="submitBtn">
