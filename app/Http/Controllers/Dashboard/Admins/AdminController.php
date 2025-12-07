@@ -11,6 +11,7 @@ use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Yajra\DataTables\Facades\DataTables;
 
 class AdminController extends Controller
@@ -178,11 +179,32 @@ class AdminController extends Controller
         }
     }
 
-    public function destroy(Request $request, Admin $admin)
+    public function destroy(Request $request, $admin)
     {
         try {
+            // Check if the model exists (including soft-deleted ones)
+            // Handle case where user clicks delete multiple times quickly
+            // $admin parameter is the ID from route (not using route model binding to avoid errors on already-deleted records)
+            $adminModel = Admin::withTrashed()->find($admin);
+
+            // If model doesn't exist at all, it was already deleted
+            if (!$adminModel) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return $this->deletedResponse('تم حذف المشرف بنجاح');
+                }
+                return redirect()->route('dashboard.admins.index')->with('success', 'تم حذف المشرف بنجاح');
+            }
+
+            // If already soft-deleted, return success
+            if ($adminModel->trashed()) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return $this->deletedResponse('تم حذف المشرف بنجاح');
+                }
+                return redirect()->route('dashboard.admins.index')->with('success', 'تم حذف المشرف بنجاح');
+            }
+
             // Prevent deleting self
-            if ($admin->id === auth('admin')->id()) {
+            if ($adminModel->id === auth('admin')->id()) {
                 if ($request->ajax() || $request->wantsJson()) {
                     return $this->errorResponse('لا يمكنك حذف حسابك الخاص', 403);
                 }
@@ -191,16 +213,23 @@ class AdminController extends Controller
             }
 
             // Delete image if exists
-            if ($admin->image) {
-                $this->deleteFile($admin->image, null, 'public');
+            if ($adminModel->image) {
+                $this->deleteFile($adminModel->image, null, 'public');
             }
 
-            $this->adminRepository->delete($admin->id);
+            // Delete the model
+            $this->adminRepository->delete($adminModel->id);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف المشرف بنجاح');
             }
 
+            return redirect()->route('dashboard.admins.index')->with('success', 'تم حذف المشرف بنجاح');
+        } catch (ModelNotFoundException $e) {
+            // Model was already deleted, return success
+            if ($request->ajax() || $request->wantsJson()) {
+                return $this->deletedResponse('تم حذف المشرف بنجاح');
+            }
             return redirect()->route('dashboard.admins.index')->with('success', 'تم حذف المشرف بنجاح');
         } catch (Exception $e) {
             if ($request->ajax() || $request->wantsJson()) {

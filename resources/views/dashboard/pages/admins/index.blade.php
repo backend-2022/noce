@@ -12,6 +12,9 @@
                     <a href="{{ route('dashboard.admins.create') }}" class="btn btn-primary" style="color: white;">
                         <i class="fa fa-plus"></i> إضافة مشرف
                     </a>
+                    <button id="datatable-delete-selected" class="btn btn-danger" style="color: white; margin-right: 10px;" disabled>
+                        <i class="fa fa-trash"></i> حذف المحدد
+                    </button>
                 </div>
 
                 <div class="table-responsive">
@@ -149,6 +152,11 @@
             table.on('draw.dt', function() {
                 $('#select-all').prop('checked', false);
                 updateBulkDeleteState();
+            });
+
+            $(document).on('click', '#datatable-delete-selected', function(e) {
+                e.preventDefault();
+                triggerBulkDelete();
             });
 
             $(document).on('datatable:delete-selected', function(event, targetSelector) {
