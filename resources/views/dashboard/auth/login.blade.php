@@ -1,7 +1,7 @@
 @extends('website.layouts.app')
 
 @section('content')
-    <section class="hero">
+    <section class="hero" style="background-image: url('{{ setting('home_banner') ? getFileFullUrl(setting('home_banner'), null, 'public', '4b0065eb-0c8d-4724-bb21-964abeca1e30.webp') : asset('assets/website/defaults/4b0065eb-0c8d-4724-bb21-964abeca1e30.webp') }}');">
         <div class="hero-content fade-in">
             <div class="contetn_hero">
                 <h1>تسجيل الدخول</h1>

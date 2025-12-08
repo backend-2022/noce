@@ -28,6 +28,10 @@ class SettingsSeeder extends Seeder
                 'key' => 'logo',
                 'value' => null,
             ],
+            [
+                'key' => 'home_banner',
+                'value' => '4b0065eb-0c8d-4724-bb21-964abeca1e30.webp',
+            ],
 
             // Social Media Settings
             [
