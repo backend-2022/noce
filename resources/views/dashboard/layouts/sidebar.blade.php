@@ -12,7 +12,6 @@
             @endif
         </a>
         <a href="{{ route('dashboard.dashboard') }}" class="back-btn" title="العودة للرئيسية">
-            <i class="fa fa-times-circle"></i>
         </a>
     </div>
 
