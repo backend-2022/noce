@@ -17,20 +17,30 @@ if (localStorage.getItem("page-wrapper") === null) {
 
 
 // left sidebar and vertical menu
-if ($('#pageWrapper').hasClass('compact-wrapper')) {
-    jQuery('.sidebar-title').append('<div class="according-menu"><i class="fa fa-angle-left"></i></div>');
+// if ($('#pageWrapper').hasClass('compact-wrapper')) {
+//     jQuery('.sidebar-title').append('<div class="according-menu"><i class="fa fa-angle-left"></i></div>');
+//     jQuery('.sidebar-title').click(function () {
+//         jQuery('.sidebar-title').removeClass('active').find('div').replaceWith('<div class="according-menu"><i class="fa fa-angle-left"></i></div>');
+//         jQuery('.sidebar-submenu, .menu-content').slideUp('normal');
+//         jQuery('.menu-content').slideUp('normal');
+//         if (jQuery(this).next().is(':hidden') == true) {
+//             jQuery(this).addClass('active');
+//             jQuery(this).find('div').replaceWith('<div class="according-menu"><i class="fa fa-angle-down"></i></div>');
+//             jQuery(this).next().slideDown('normal');
+//         } else {
+//             jQuery(this).find('div').replaceWith('<div class="according-menu"><i class="fa fa-angle-left"></i></div>');
+//         }
+//     });
+
+// الاسكربتاية المعدلة بدل اللي فوقها علي طول
+
+    if ($('#pageWrapper').hasClass('compact-wrapper')) {
     jQuery('.sidebar-title').click(function () {
-        jQuery('.sidebar-title').removeClass('active').find('div').replaceWith('<div class="according-menu"><i class="fa fa-angle-left"></i></div>');
         jQuery('.sidebar-submenu, .menu-content').slideUp('normal');
         jQuery('.menu-content').slideUp('normal');
-        if (jQuery(this).next().is(':hidden') == true) {
-            jQuery(this).addClass('active');
-            jQuery(this).find('div').replaceWith('<div class="according-menu"><i class="fa fa-angle-down"></i></div>');
-            jQuery(this).next().slideDown('normal');
-        } else {
-            jQuery(this).find('div').replaceWith('<div class="according-menu"><i class="fa fa-angle-left"></i></div>');
-        }
     });
+
+
     jQuery('.sidebar-submenu, .menu-content').hide();
     jQuery('.submenu-title').append('<div class="according-menu"><i class="fa fa-angle-left"></i></div>');
     jQuery('.submenu-title').click(function () {
