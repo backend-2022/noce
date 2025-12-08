@@ -509,7 +509,7 @@ function handleFormSubmission(formSelector, options = {}) {
                 const buttonText = submitButton.querySelector(".button-text");
                 if (buttonText) {
                     // Add spinner before text
-                    const spinner = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>';
+                    const spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
                     buttonText.innerHTML = spinner + 'جارى المعالجة...';
                     submitButton.style.opacity = "0.7";
                     submitButton.style.cursor = "not-allowed";
