@@ -24,6 +24,10 @@ class SettingsSeeder extends Seeder
                 'key' => 'description',
                 'value' => 'نحول أحلامك إلى واقع من خلال تصميمات داخلية مبتكرة وعصرية',
             ],
+            [
+                'key' => 'logo',
+                'value' => null,
+            ],
 
             // Social Media Settings
             [

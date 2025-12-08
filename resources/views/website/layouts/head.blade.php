@@ -1,6 +1,6 @@
 
 <title>
-    @yield('title', setting('title', 'صمم مساحتك معانا'))
+    @yield('title', setting('meta_title') ?? 'صمم مساحتك معانا' . ' | ' . setting('site_name') ?? 'NOCE - نوتش')
 </title>
 
 @include('website.inc.metas')

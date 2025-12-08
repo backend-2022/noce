@@ -1,6 +1,6 @@
 
 <title>
-    @yield('title', setting('site_name') ?? 'NOCE - نوتش' . ' | لوحة التحكم')
+    @yield('title', setting('meta_title') ?? 'NOCE - نوتش' . ' | لوحة التحكم')
 </title>
 
 @include('dashboard.inc.metas')
@@ -20,7 +20,7 @@
     }
 
     .loader::before {
-        content: '';  
+        content: '';
         left: 0;
         top: 0;
         position: absolute;
@@ -35,7 +35,7 @@
     }
 
     .loader::after {
-        content: '';  
+        content: '';
         left: 35px;
         top: 15px;
         position: absolute;

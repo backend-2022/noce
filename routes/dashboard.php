@@ -8,6 +8,7 @@ use App\Http\Controllers\Dashboard\Admins\AdminController;
 use App\Http\Controllers\Dashboard\Cities\CityController;
 use App\Http\Controllers\Dashboard\Services\ServiceController;
 use App\Http\Controllers\Dashboard\FreeDesigns\FreeDesignController;
+use App\Http\Controllers\Dashboard\Backups\BackupController;
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     // Phone Codes Route (public - no authentication required)
     Route::get('/phone-codes', function () {
@@ -52,6 +53,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::put('/', [SettingController::class, 'update'])->name('update');
             Route::get('/social-media', [SettingController::class, 'socialMediaIndex'])->name('social-media.index');
             Route::put('/social-media', [SettingController::class, 'updateSocialMedia'])->name('social-media.update');
+            Route::get('/seo', [SettingController::class, 'seoIndex'])->name('seo.index');
+            Route::put('/seo', [SettingController::class, 'updateSeo'])->name('seo.update');
         });
 
         Route::resource('cities', CityController::class);
@@ -69,6 +72,11 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::delete('/admins/bulk-destroy', [AdminController::class, 'bulkDestroy'])->name('admins.bulk-destroy');
         Route::resource('admins', AdminController::class);
         Route::patch('/admins/{admin}/toggle-status', [AdminController::class, 'toggleStatus'])->name('admins.toggle-status');
+
+        // Backups Routes
+        Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+        Route::get('backups/{backup}/download', [BackupController::class, 'download'])->name('backups.download');
+        Route::delete('backups/{backup}', [BackupController::class, 'destroy'])->name('backups.destroy');
 
     });
 });
