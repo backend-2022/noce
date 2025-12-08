@@ -50,6 +50,20 @@
                     </div>
                 </div>
 
+                <!-- Map Link -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <label class="label_style" for="map_link">رابط الخريطة</label>
+                        <input type="url"
+                               id="map_link"
+                               name="map_link"
+                               class="form-control"
+                               value="{{ old('map_link', $settings['map_link'] ?? '') }}"
+                               placeholder="https://www.google.com/maps/embed?pb=...">
+                        <small class="text-muted">أدخل رابط الخريطة من Google Maps (Embed Link)</small>
+                    </div>
+                </div>
+
             </div>
 
             <button type="submit" class="save_informations" id="submitBtn">

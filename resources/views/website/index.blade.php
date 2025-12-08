@@ -51,4 +51,23 @@
             </div>
         </div>
     </section>
+
+    @if(setting('map_link'))
+    <section class="map-section">
+        <div class="map-container">
+            <h2 class="map-title">موقعنا على الخريطة</h2>
+            <div class="map-wrapper">
+                <iframe
+                    src="{{ setting('map_link') }}"
+                    width="100%"
+                    height="450"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+    @endif
 @endsection

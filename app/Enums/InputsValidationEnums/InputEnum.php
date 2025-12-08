@@ -70,7 +70,7 @@ enum InputEnum: string
             self::START_TIME => 'date_format:H:i',
             self::END_TIME => 'date_format:H:i',
             self::SELECT => 'string|in:' . implode(',', $options),
-            self::URL => 'url|max:255',
+            self::URL => 'url|max:1000',
             self::PHONE => 'string|regex:/^5\d{8}$/',
             self::FILE => 'file|max:10240',
         };

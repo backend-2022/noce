@@ -20,6 +20,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'site_name' => InputEnum::TITLE->getValidationRules(),
             'promotional_title' => InputEnum::TITLE->getValidationRules(),
             'description' => InputEnum::DESCRIPTION->getValidationRules(),
+            'map_link' => InputEnum::URL->getValidationRules(false),
         ];
     }
 
@@ -40,6 +41,9 @@ class UpdateGeneralSettingRequest extends FormRequest
             'description.string' => 'نبذة عن الموقع يجب أن يكون نص',
             'description.max' => 'نبذة عن الموقع يجب أن لا يتجاوز 1000 حرف',
             'description.min' => 'نبذة عن الموقع يجب أن يكون على الأقل 3 أحرف',
+
+            'map_link.url' => 'رابط الخريطة يجب أن يكون رابط صحيح',
+            'map_link.max' => 'رابط الخريطة يجب أن لا يتجاوز 1000 حرف',
         ];
     }
 
@@ -50,6 +54,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'site_name' => 'اسم الموقع',
             'promotional_title' => 'العنوان الترويجي',
             'description' => 'نبذة عن الموقع',
+            'map_link' => 'رابط الخريطة',
         ];
     }
 }
