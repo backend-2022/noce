@@ -5,9 +5,11 @@
         <div class="contentt mb-4">
             <a class="ref_settings active" href="{{ route('dashboard.settings.index') }}">عام</a>
             <a class="ref_settings" href="{{ route('dashboard.settings.social-media.index') }}">روابط التواصل الاجتماعي</a>
+            <a class="ref_settings" href="{{ route('dashboard.settings.seo.index') }}">بيانات SEO</a>
         </div>
 
-        <form id="settingsForm" action="{{ route('dashboard.settings.update') }}" method="POST" autocomplete="off">
+        <form id="settingsForm" action="{{ route('dashboard.settings.update') }}" method="POST" autocomplete="off"
+            enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -16,12 +18,8 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
                     <div class="div_input_label">
                         <label class="label_style" for="site_name">اسم الموقع</label>
-                        <input type="text"
-                               id="site_name"
-                               name="site_name"
-                               class="form-control"
-                               value="{{ old('site_name', $settings['site_name'] ?? '') }}"
-                               placeholder="اسم الموقع">
+                        <input type="text" id="site_name" name="site_name" class="form-control"
+                            value="{{ old('site_name', $settings['site_name'] ?? '') }}" placeholder="اسم الموقع">
                     </div>
                 </div>
 
@@ -29,12 +27,9 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
                     <div class="div_input_label">
                         <label class="label_style" for="promotional_title">العنوان الترويجي</label>
-                        <input type="text"
-                               id="promotional_title"
-                               name="promotional_title"
-                               class="form-control"
-                               value="{{ old('promotional_title', $settings['promotional_title'] ?? '') }}"
-                               placeholder="العنوان الترويجي">
+                        <input type="text" id="promotional_title" name="promotional_title" class="form-control"
+                            value="{{ old('promotional_title', $settings['promotional_title'] ?? '') }}"
+                            placeholder="العنوان الترويجي">
                     </div>
                 </div>
 
@@ -42,11 +37,7 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
                     <div class="div_input_label">
                         <label class="label_style" for="description">نبذة عن الموقع</label>
-                        <textarea id="description"
-                                  name="description"
-                                  class="form-control"
-                                  rows="4"
-                                  placeholder="وصف">{{ old('description', $settings['description'] ?? '') }}</textarea>
+                        <textarea id="description" name="description" class="form-control" rows="4" placeholder="وصف">{{ old('description', $settings['description'] ?? '') }}</textarea>
                     </div>
                 </div>
 
@@ -54,13 +45,51 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
                     <div class="div_input_label">
                         <label class="label_style" for="map_link">رابط الخريطة</label>
-                        <input type="url"
-                               id="map_link"
-                               name="map_link"
-                               class="form-control"
-                               value="{{ old('map_link', $settings['map_link'] ?? '') }}"
-                               placeholder="https://www.google.com/maps/embed?pb=...">
+                        <input type="url" id="map_link" name="map_link" class="form-control"
+                            value="{{ old('map_link', $settings['map_link'] ?? '') }}"
+                            placeholder="https://www.google.com/maps/embed?pb=...">
                         <small class="text-muted">أدخل رابط الخريطة من Google Maps (Embed Link)</small>
+                    </div>
+                </div>
+
+                <!-- Logo Upload -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <label class="label_style" for="logo">الشعار</label>
+                        <div class="uplode_section">
+                            <div class="upload_div" id="logoUploadDiv">
+                                @php
+                                    $logoUrl = asset('assets/dashboard/images/white_img.png');
+                                    if (isset($settings['logo']) && !empty($settings['logo'])) {
+                                        $logoUrl = getFileFullUrl(
+                                            $settings['logo'],
+                                            null,
+                                            'public',
+                                            'white_img.png',
+                                        );
+                                    }
+                                @endphp
+                                <img id="logoPreviewImg" src="{{ $logoUrl }}" alt="Logo"
+                                    onerror="this.src='{{ asset('assets/dashboard/images/white_img.png') }}'">
+                                <span id="logoUploadText">إضغط لاختيار الشعار</span>
+                            </div>
+                            <input type="file" id="logoInput" name="logo" accept="image/*"
+                                style="display:none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Keep Backups Toggle -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input check_styles rounded-pill" type="checkbox" role="switch"
+                                name="keep_backups" value="1" id="keep_backups_toggle"
+                                {{ old('keep_backups', $settings['keep_backups'] ?? '') == '1' ? 'checked' : '' }} />
+                            <label class="form-check-label" for="keep_backups_toggle">
+                                الاحتفاظ بالنسخ الاحتياطية القديمة
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -77,6 +106,11 @@
 @push('js')
     <script>
         $(document).ready(function() {
+            // Initialize logo image upload
+            if (typeof setupImageUpload === 'function') {
+                setupImageUpload('logoUploadDiv', 'logoInput', 'logoPreviewImg', 'logoUploadText', 'white_img.png');
+            }
+
             // Initialize form submission handler
             if (typeof handleFormSubmission === 'function') {
                 handleFormSubmission('#settingsForm', {
@@ -86,6 +120,20 @@
                         // Clear any previous validation errors on success
                         $('#settingsForm').find('.is-invalid').removeClass('is-invalid');
                         $('#settingsForm').find('.error-container').remove();
+
+                        // Update logo preview if logo was uploaded
+                        if (response.data && response.data.settings && response.data.settings
+                            .logo_url) {
+                            $('#logoPreviewImg').attr('src', response.data.settings.logo_url);
+                            if (typeof applyImagePreviewStyling === 'function') {
+                                applyImagePreviewStyling(
+                                    document.getElementById('logoPreviewImg'),
+                                    document.getElementById('logoUploadDiv'),
+                                    document.getElementById('logoUploadText'),
+                                    'white_img.png'
+                                );
+                            }
+                        }
                     }
                 });
             } else {

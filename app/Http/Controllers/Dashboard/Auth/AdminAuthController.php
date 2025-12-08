@@ -22,35 +22,29 @@ class AdminAuthController extends Controller
 
     public function login(AdminLoginRequest $request)
     {
-        $admin = Admin::where('email', $request->email)->first();
+        // Generic error message for security (don't reveal if email exists)
+        $genericErrorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
 
-        if (!$admin) {
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'البريد الإلكتروني غير مسجل',
-                    'errors' => ['email' => 'البريد الإلكتروني غير مسجل']
-                ], 422);
-            }
-            return redirect()->back()
-                ->withErrors(['email' => 'البريد الإلكتروني غير مسجل'])
-                ->withInput($request->except('password'));
-        }
-
-        if (!$admin->is_active) {
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'حسابك غير مفعل',
-                    'errors' => ['email' => 'حسابك غير مفعل']
-                ], 422);
-            }
-            return redirect()->back()
-                ->withErrors(['email' => 'حسابك غير مفعل'])
-                ->withInput($request->except('password'));
-        }
-
+        // Try to authenticate first
         if (Auth::guard('admin')->attempt($request->only('email', 'password'), $request->filled('remember'))) {
+            $admin = Auth::guard('admin')->user();
+
+            // Check if account is active after successful authentication
+            if (!$admin->is_active) {
+                Auth::guard('admin')->logout();
+
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'حسابك غير مفعل',
+                        'errors' => ['email' => 'حسابك غير مفعل']
+                    ], 422);
+                }
+                return redirect()->back()
+                    ->withErrors(['email' => 'حسابك غير مفعل'])
+                    ->withInput($request->except('password'));
+            }
+
             $request->session()->regenerate();
 
             if ($request->expectsJson() || $request->ajax()) {
@@ -65,16 +59,17 @@ class AdminAuthController extends Controller
                 ->with('success', 'مرحباً بك ' . $admin->name);
         }
 
+        // Authentication failed - return generic message (don't reveal if email exists or password is wrong)
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => false,
-                'message' => 'كلمة المرور غير صحيحة',
-                'errors' => ['password' => 'كلمة المرور غير صحيحة']
+                'message' => $genericErrorMessage,
+                'errors' => []
             ], 422);
         }
 
         return redirect()->back()
-            ->withErrors(['password' => 'كلمة المرور غير صحيحة'])
+            ->withErrors(['email' => $genericErrorMessage])
             ->withInput($request->except('password'));
     }
 

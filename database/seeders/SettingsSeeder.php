@@ -24,6 +24,10 @@ class SettingsSeeder extends Seeder
                 'key' => 'description',
                 'value' => 'نحول أحلامك إلى واقع من خلال تصميمات داخلية مبتكرة وعصرية',
             ],
+            [
+                'key' => 'logo',
+                'value' => null,
+            ],
 
             // Social Media Settings
             [
@@ -45,6 +49,10 @@ class SettingsSeeder extends Seeder
             [
                 'key' => 'whatsapp',
                 'value' => '5xxxxxxxx',
+            ],
+            [
+                'key' => 'keep_backups',
+                'value' => '0',
             ],
         ];
 

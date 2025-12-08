@@ -1,11 +1,19 @@
 <div class="sidebar-wrapper">
     <div class="logo-wrapper">
         <a href="{{ route('dashboard.dashboard') }}">
-           <h1>{{ setting('site_name') ?? 'NOCE - نوتش' }}</h1>
+            @php
+                $logo = setting('logo');
+                $logoUrl = $logo ? getFileFullUrl($logo, null, 'public', 'white_img.png') : null;
+            @endphp
+            @if($logoUrl && $logo)
+                <img src="{{ $logoUrl }}" alt="{{ setting('site_name') ?? 'NOCE - نوتش' }}" style="max-width: 100%; max-height: 60px; object-fit: contain;">
+            @else
+                <h1>{{ setting('site_name') ?? 'NOCE - نوتش' }}</h1>
+            @endif
         </a>
-        <div class="back-btn"><i class="fa fa-times-circle"></i>
-
-        </div>
+        <a href="{{ route('dashboard.dashboard') }}" class="back-btn" title="العودة للرئيسية">
+            <i class="fa fa-times-circle"></i>
+        </a>
     </div>
 
     <nav class="sidebar-main">
@@ -62,6 +70,16 @@
 
                     </li>
 
+                    <li class="sidebar-list {{ isActiveRouteGroup('dashboard.backups.') }}">
+                        <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.backups.') }}" href="{{ route('dashboard.backups.index') }}">
+                            <div class="img_div">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
+                            </div>
+                            <span class="hide_span">النسخ الاحتياطية</span>
+                        </a>
+
+                    </li>
+
                 </div>
 
 
@@ -76,7 +94,7 @@
 
                     </li>
 
-                    <li class="sidebar-list">
+                    <li class="sidebar-list ">
                         <form action="{{ route('dashboard.logout') }}" method="POST" style="display: inline;">
                             @csrf
                             <button type="submit" class="sidebar-link sidebar-title link-nav logout_bg" style="border: none; background: none; width: 100%; text-align: right; padding: 0;">

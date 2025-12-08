@@ -7,6 +7,7 @@ use App\Models\FreeDesign;
 use App\Repositories\Interfaces\FreeDesignRepositoryInterface;
 use App\Traits\ApiResponse;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -28,7 +29,7 @@ class FreeDesignController extends Controller
     {
         if ($request->ajax()) {
             $query = $this->freeDesignRepository->buildQueryWithRelations()
-                ->orderBy('updated_at', 'desc');
+                ->orderBy('created_at', 'desc');
 
             return DataTables::of($query)
                 ->filter(function ($query) use ($request) {
@@ -72,15 +73,43 @@ class FreeDesignController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, FreeDesign $freeDesign)
+    public function destroy(Request $request, $freeDesign)
     {
         try {
-            $this->freeDesignRepository->delete($freeDesign->id);
+            // Check if the model exists (including soft-deleted ones)
+            // Handle case where user clicks delete multiple times quickly
+            // $freeDesign parameter is the ID from route (not using route model binding to avoid errors on already-deleted records)
+            $freeDesignModel = FreeDesign::withTrashed()->find($freeDesign);
+
+            // If model doesn't exist at all, it was already deleted
+            if (!$freeDesignModel) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return $this->deletedResponse('تم حذف طلب التصميم المجاني بنجاح');
+                }
+                return redirect()->route('dashboard.free-designs.index')->with('success', 'تم حذف طلب التصميم المجاني بنجاح');
+            }
+
+            // If already soft-deleted, return success
+            if ($freeDesignModel->trashed()) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return $this->deletedResponse('تم حذف طلب التصميم المجاني بنجاح');
+                }
+                return redirect()->route('dashboard.free-designs.index')->with('success', 'تم حذف طلب التصميم المجاني بنجاح');
+            }
+
+            // Delete the model
+            $this->freeDesignRepository->delete($freeDesignModel->id);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف طلب التصميم المجاني بنجاح');
             }
 
+            return redirect()->route('dashboard.free-designs.index')->with('success', 'تم حذف طلب التصميم المجاني بنجاح');
+        } catch (ModelNotFoundException $e) {
+            // Model was already deleted, return success
+            if ($request->ajax() || $request->wantsJson()) {
+                return $this->deletedResponse('تم حذف طلب التصميم المجاني بنجاح');
+            }
             return redirect()->route('dashboard.free-designs.index')->with('success', 'تم حذف طلب التصميم المجاني بنجاح');
         } catch (Exception $e) {
             if ($request->ajax() || $request->wantsJson()) {

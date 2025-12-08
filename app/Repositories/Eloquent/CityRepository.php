@@ -39,6 +39,11 @@ class CityRepository implements CityRepositoryInterface
     {
         $city = $this->model->find($id);
         if ($city) {
+            // Update the name with timestamp before soft deleting to avoid unique constraint issues
+            $timestamp = time();
+            $city->name = $city->name . '-' . $timestamp;
+            $city->save();
+
             return $city->delete();
         }
         return false;

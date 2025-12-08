@@ -1,6 +1,6 @@
 @extends('dashboard.layouts.app')
 
-@section('pageTitle', 'إدارة الخدمات')
+@section('pageTitle', 'إدارة النسخ الاحتياطية')
 
 @section('content')
 
@@ -9,20 +9,13 @@
             <div class="line-body"></div>
         </div>
         <div class="card-body">
-            <div class="mb-3">
-                <a href="{{ route('dashboard.services.create') }}" class="btn btn-primary" style="color: white;">
-                    <i class="fa fa-plus"></i> إضافة خدمة
-                </a>
-            </div>
-
             <div class="table-responsive">
-                <table id="services-table" class="table table-bordered tabel_style w-100 description_style"
-                    data-url="{{ route('dashboard.services.index') }}">
+                <table id="backups-table" class="table table-bordered tabel_style w-100"
+                    data-url="{{ route('dashboard.backups.index') }}">
                     <thead>
                         <tr>
-                            <th>اسم الخدمة</th>
-                            <th>الوصف</th>
-                            <th>الحالة</th>
+                            <th>اسم النسخة الاحتياطية</th>
+                            <th>تاريخ الإنشاء</th>
                             <th>إجراءات</th>
                         </tr>
                     </thead>
@@ -49,13 +42,13 @@
 
     <script src="{{ asset('assets/dashboard/js/datatable-handler.js') }}"></script>
     <script>
-        var currentRouteName = 'dashboard.services.index';
+        var currentRouteName = 'dashboard.backups.index';
         $(document).ready(function() {
-            var $tableElement = $('#services-table');
+            var $tableElement = $('#backups-table');
             var dataUrl = $tableElement.data('url');
 
             var table = initDataTable(
-                '#services-table',
+                '#backups-table',
                 dataUrl,
                 [
                     {
@@ -63,14 +56,8 @@
                         name: 'name'
                     },
                     {
-                        data: 'description',
-                        name: 'description'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status',
-                        orderable: false,
-                        searchable: false
+                        data: 'created_at',
+                        name: 'created_at'
                     },
                     {
                         data: 'actions',
@@ -84,7 +71,7 @@
             $(document).on('click', '.delete_row', function(e) {
                 e.preventDefault();
                 var deleteUrl = $(this).attr('data-url');
-                var serviceName = $(this).attr('data-service-name');
+                var backupName = $(this).attr('data-backup-name');
                 var row = $(this).closest('tr');
 
                 if (!deleteUrl) {
@@ -94,14 +81,14 @@
 
                 handleDelete(
                     deleteUrl,
-                    'تم حذف الخدمة بنجاح',
-                    'حدث خطأ أثناء حذف الخدمة',
+                    'تم حذف النسخة الاحتياطية بنجاح',
+                    'حدث خطأ أثناء حذف النسخة الاحتياطية',
                     row,
                     function() {
                         table.ajax.reload(null, false);
                     },
                     'هل أنت متأكد؟',
-                    'هل تريد حذف الخدمة: ' + serviceName + '؟\nلا يمكن التراجع عن هذا الإجراء!'
+                    'هل تريد حذف النسخة الاحتياطية: ' + backupName + '؟\nلا يمكن التراجع عن هذا الإجراء!'
                 );
             });
         });

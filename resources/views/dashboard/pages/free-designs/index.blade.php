@@ -1,6 +1,6 @@
 @extends('dashboard.layouts.app')
 
-@section('pageTitle', 'إدارة طلبات التصميم المجاني')
+@section('pageTitle', 'إدارة الخدمات المجانية')
 
 @section('content')
 

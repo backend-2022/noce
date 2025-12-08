@@ -17,7 +17,7 @@ class UpdateCityRequest extends FormRequest
         $cityId = $this->route('city')->id;
 
         return [
-            'name' => InputEnum::TITLE->getValidationRules() . '|regex:/^[\p{Arabic}a-zA-Z0-9\s]+$/u|unique:cities,name,' . $cityId,
+            'name' => InputEnum::TITLE->getValidationRules() .'|unique:cities,name,' . $cityId,
             'is_active' => 'boolean',
         ];
     }
