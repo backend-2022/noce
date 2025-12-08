@@ -40,6 +40,7 @@ if (localStorage.getItem("page-wrapper") === null) {
         jQuery('.menu-content').slideUp('normal');
     });
 
+    // نهاية الاسكربتاية المعدلة
 
     jQuery('.sidebar-submenu, .menu-content').hide();
     jQuery('.submenu-title').append('<div class="according-menu"><i class="fa fa-angle-left"></i></div>');
