@@ -99,6 +99,11 @@
                         // Clear any previous validation errors on success
                         $('#socialMediaForm').find('.is-invalid').removeClass('is-invalid');
                         $('#socialMediaForm').find('.error-container').remove();
+
+                        // Reload the page after successful update
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
                     }
                 });
             } else {

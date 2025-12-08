@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\InputsValidationEnums\InputEnum;
 use App\Enums\MimesValidationEnums\ImageMimesValidationEnum;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Contracts\Validation\Validator;
 
 class UpdateProfileRequest extends FormRequest
 {
@@ -22,9 +24,21 @@ class UpdateProfileRequest extends FormRequest
             'name' => InputEnum::TITLE->getValidationRules(). '|regex:/^[\p{Arabic}a-zA-Z0-9\s]+$/u', //  only letters, numbers and spaces and arabic letters and english letters
             'email' => InputEnum::EMAIL->getValidationRules(true, [Rule::unique('admins', 'email')->ignore($adminId)]),
             'image' => ImageMimesValidationEnum::validationRule(),
-            'password' => InputEnum::PASSWORD->getValidationRules(false) . '|different:password',
+            'password' => InputEnum::PASSWORD->getValidationRules(false),
             'password_confirmation' => InputEnum::PASSWORD->getValidationRules(false) . '|same:password|required_with:password',
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function ($validator) {
+            $admin = auth('admin')->user();
+            $newPassword = $this->input('password');
+
+            if ($newPassword && $admin && Hash::check($newPassword, $admin->password)) {
+                $validator->errors()->add('password', 'كلمة المرور الجديدة يجب أن تكون مختلفة عن كلمة المرور القديمة.');
+            }
+        });
     }
 
     public function messages(): array

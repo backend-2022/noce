@@ -72,6 +72,11 @@
                         // Clear any previous validation errors on success
                         $('#seoForm').find('.is-invalid').removeClass('is-invalid');
                         $('#seoForm').find('.error-container').remove();
+
+                        // Reload the page after successful update
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
                     }
                 });
             } else {

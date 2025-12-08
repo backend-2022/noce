@@ -177,6 +177,11 @@
                                 );
                             }
                         }
+
+                        // Reload the page after successful update
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
                     }
                 });
             } else {
