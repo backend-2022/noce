@@ -56809,7 +56809,7 @@ div.dataTables_wrapper div.dataTables_filter label {
     list-style: none;
     margin: 0;
     padding: 10px 15px;
-    width:100%;
+    width: 100%;
     border-radius: 0px 0px 6px 6px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     opacity: 0;
@@ -57208,6 +57208,12 @@ div.dataTables_wrapper div.dataTables_filter label {
     transition: all 0.3s;
 }
 
+.save_informations .button-text {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .save_informations:hover {
     background: #083b64;
 }
@@ -57577,7 +57583,7 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 50%;
 }
 
-.col-12.table-design-inner{
+.col-12.table-design-inner {
     overflow: auto !important;
 }
 
@@ -57594,7 +57600,7 @@ input[type=number]::-webkit-outer-spin-button {
     background: #02457A !important;
 }
 
-.sidebar-link.sidebar-title.logout_bg{
+.sidebar-link.sidebar-title.logout_bg {
     background: #F0F0F0 !important;
     padding: 7px 15px !important;
 }
@@ -57616,15 +57622,15 @@ input[type=number]::-webkit-outer-spin-button {
     font-weight: 500;
 }
 
-.sidebar-link.sidebar-title.logout_bg .according-menu{
+.sidebar-link.sidebar-title.logout_bg .according-menu {
     display: none;
 }
 
 .description_style tbody tr td:nth-child(2) .span_styles {
-      display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 
