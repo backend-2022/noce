@@ -21,15 +21,18 @@ class UpdateGeneralSettingRequest extends FormRequest
             'site_name' => InputEnum::TITLE->getValidationRules(),
             'promotional_title' => InputEnum::TITLE->getValidationRules(),
             'description' => InputEnum::DESCRIPTION->getValidationRules(),
-            'map_link' => InputEnum::URL->getValidationRules(false),
+            'map_link' => 'nullable|string|max:10000', // Accept string to allow iframe code or URL
             'keep_backups' => 'nullable|in:1',
             'logo' => 'nullable|' . IconMimesValidationEnum::validationRule(),
+            'home_banner' => 'nullable|' . IconMimesValidationEnum::validationRule(),
         ];
     }
 
     public function messages(): array
     {
         $logoMessages = IconMimesValidationEnum::getValidationMessages('logo');
+
+        $homeBannerMessages = IconMimesValidationEnum::getValidationMessages('home_banner');
 
         return array_merge([
             'site_name.required' => 'اسم الموقع مطلوب',
@@ -47,9 +50,9 @@ class UpdateGeneralSettingRequest extends FormRequest
             'description.max' => 'نبذة عن الموقع يجب أن لا يتجاوز 1000 حرف',
             'description.min' => 'نبذة عن الموقع يجب أن يكون على الأقل 3 أحرف',
 
-            'map_link.url' => 'رابط الخريطة يجب أن يكون رابط صحيح',
-            'map_link.max' => 'رابط الخريطة يجب أن لا يتجاوز 1000 حرف',
-        ], $logoMessages);
+            'map_link.string' => 'رابط الخريطة يجب أن يكون نص',
+            'map_link.max' => 'رابط الخريطة يجب أن لا يتجاوز 10000 حرف',
+        ], $logoMessages, $homeBannerMessages);
     }
 
 
@@ -61,6 +64,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'description' => 'نبذة عن الموقع',
             'map_link' => 'رابط الخريطة',
             'logo' => 'الشعار',
+            'home_banner' => 'صورة البانر الرئيسية',
         ];
     }
 }

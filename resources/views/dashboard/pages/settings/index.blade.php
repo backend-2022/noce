@@ -45,10 +45,11 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
                     <div class="div_input_label">
                         <label class="label_style" for="map_link">رابط الخريطة</label>
-                        <input type="url" id="map_link" name="map_link" class="form-control"
-                            value="{{ old('map_link', $settings['map_link'] ?? '') }}"
-                            placeholder="https://www.google.com/maps/embed?pb=...">
-                        <small class="text-muted">أدخل رابط الخريطة من Google Maps (Embed Link)</small>
+                        <textarea id="map_link" name="map_link" class="form-control" rows="3"
+                            placeholder="يمكنك إدخال رابط الخريطة أو كود iframe كامل:
+- رابط: https://www.google.com/maps/embed?pb=...
+- أو iframe: &lt;iframe src=&quot;https://www.google.com/maps/embed?pb=...&quot;&gt;&lt;/iframe&gt;">{{ old('map_link', $settings['map_link'] ?? '') }}</textarea>
+                        <small class="text-muted">يمكنك إدخال رابط الخريطة مباشرة أو كود iframe كامل من Google Maps</small>
                     </div>
                 </div>
 
@@ -74,6 +75,33 @@
                                 <span id="logoUploadText">إضغط لاختيار الشعار</span>
                             </div>
                             <input type="file" id="logoInput" name="logo" accept="image/*"
+                                style="display:none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Home Banner Upload -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <label class="label_style" for="home_banner">صورة خلفية الرئيسية</label>
+                        <div class="uplode_section">
+                            <div class="upload_div" id="homeBannerUploadDiv">
+                                @php
+                                    $homeBannerUrl = asset('assets/dashboard/images/white_img.png');
+                                    if (isset($settings['home_banner']) && !empty($settings['home_banner'])) {
+                                        $homeBannerUrl = getFileFullUrl(
+                                            $settings['home_banner'],
+                                            null,
+                                            'public',
+                                            'white_img.png',
+                                        );
+                                    }
+                                @endphp
+                                <img id="homeBannerPreviewImg" src="{{ $homeBannerUrl }}" alt="Home Banner"
+                                    onerror="this.src='{{ asset('assets/dashboard/images/white_img.png') }}'">
+                                <span id="homeBannerUploadText">إضغط لاختيار صورة خلفية الرئيسية</span>
+                            </div>
+                            <input type="file" id="homeBannerInput" name="home_banner" accept="image/*"
                                 style="display:none;">
                         </div>
                     </div>
@@ -109,6 +137,7 @@
             // Initialize logo image upload
             if (typeof setupImageUpload === 'function') {
                 setupImageUpload('logoUploadDiv', 'logoInput', 'logoPreviewImg', 'logoUploadText', 'white_img.png');
+                setupImageUpload('homeBannerUploadDiv', 'homeBannerInput', 'homeBannerPreviewImg', 'homeBannerUploadText', 'white_img.png');
             }
 
             // Initialize form submission handler
@@ -130,6 +159,20 @@
                                     document.getElementById('logoPreviewImg'),
                                     document.getElementById('logoUploadDiv'),
                                     document.getElementById('logoUploadText'),
+                                    'white_img.png'
+                                );
+                            }
+                        }
+
+                        // Update home_banner preview if home_banner was uploaded
+                        if (response.data && response.data.settings && response.data.settings
+                            .home_banner_url) {
+                            $('#homeBannerPreviewImg').attr('src', response.data.settings.home_banner_url);
+                            if (typeof applyImagePreviewStyling === 'function') {
+                                applyImagePreviewStyling(
+                                    document.getElementById('homeBannerPreviewImg'),
+                                    document.getElementById('homeBannerUploadDiv'),
+                                    document.getElementById('homeBannerUploadText'),
                                     'white_img.png'
                                 );
                             }

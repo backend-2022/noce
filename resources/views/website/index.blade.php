@@ -1,7 +1,7 @@
 @extends('website.layouts.app')
 
 @section('content')
-    <section class="hero">
+    <section class="hero" style="background-image: url('{{ setting('home_banner') ? getFileFullUrl(setting('home_banner'), null, 'public', '4b0065eb-0c8d-4724-bb21-964abeca1e30.webp') : asset('assets/website/defaults/4b0065eb-0c8d-4724-bb21-964abeca1e30.webp') }}');">
         <div class="hero-content fade-in">
             <div class="contetn_hero">
                 <h1>{{ setting('promotional_title') ?? 'صمم مساحتك معانا' }}</h1>
@@ -58,7 +58,8 @@
             <h2 class="map-title">موقعنا على الخريطة</h2>
             <div class="map-wrapper">
                 <iframe
-                    src="{{ setting('map_link') }}"
+                    id="googleMapIframe"
+                    data-map-link="{{ setting('map_link') }}"
                     width="100%"
                     height="450"
                     style="border:0;"
@@ -96,6 +97,50 @@
                     rtl: true
                 };
             }
+
+            // Set Google Maps iframe source
+            const mapIframe = document.getElementById('googleMapIframe');
+            if (mapIframe) {
+                const mapLink = mapIframe.getAttribute('data-map-link');
+                if (mapLink) {
+                    // If it's already an embed link (from Google Maps embed), use it directly
+                    if (mapLink.includes('google.com/maps/embed')) {
+                        mapIframe.src = mapLink;
+                    }
+                    // Handle maps.app.goo.gl share links
+                    else if (mapLink.includes('maps.app.goo.gl')) {
+                        // Convert share link to embed format
+                        mapIframe.src = 'https://www.google.com/maps?q=' + encodeURIComponent(mapLink) + '&output=embed';
+                    }
+                    // Handle maps.google.com links with place ID
+                    else if (mapLink.includes('maps.google.com') && mapLink.includes('/place/')) {
+                        const placeMatch = mapLink.match(/\/place\/([^\/\?]+)/);
+                        if (placeMatch) {
+                            mapIframe.src = 'https://www.google.com/maps?q=place_id:' + encodeURIComponent(placeMatch[1]) + '&output=embed';
+                        } else {
+                            mapIframe.src = mapLink;
+                        }
+                    }
+                    // Handle maps.google.com links with coordinates
+                    else if (mapLink.includes('@')) {
+                        const coordMatch = mapLink.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+                        if (coordMatch) {
+                            mapIframe.src = 'https://www.google.com/maps?q=' + coordMatch[1] + ',' + coordMatch[2] + '&output=embed';
+                        } else {
+                            mapIframe.src = mapLink;
+                        }
+                    }
+                    // For other Google Maps URLs
+                    else if (mapLink.includes('google.com/maps')) {
+                        mapIframe.src = mapLink + (mapLink.includes('?') ? '&' : '?') + 'output=embed';
+                    }
+                    // For any other URL, use it as is
+                    else {
+                        mapIframe.src = mapLink;
+                    }
+                }
+            }
+
             // Contact Form Handler using ajax-handler
             if (typeof handleFormSubmission !== 'undefined') {
                 const submitButton = document.querySelector('#contactForm button[type="submit"]');
