@@ -7,36 +7,19 @@
         <div class="card">
             <div class="line-body"></div>
             <div class="card-body">
-                <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-                    <select class="form-select form-select-solid w-200px" id="admin_filter" style="max-width: 200px;">
-                        <option value="">جميع المشرفين</option>
-                        @foreach($admins as $admin)
-                            <option value="{{ $admin->id }}">{{ $admin->name }} ({{ $admin->email }})</option>
-                        @endforeach
-                    </select>
-                    <select class="form-select form-select-solid w-200px" id="action_filter" style="max-width: 200px;">
-                        <option value="">جميع الإجراءات</option>
-                        <option value="admin_created">إنشاء مشرف</option>
-                        <option value="admin_updated">تحديث مشرف</option>
-                        <option value="admin_deleted">حذف مشرف</option>
-                        <option value="admin_bulk_deleted">حذف جماعي للمشرفين</option>
-                        <option value="admin_status_toggled">تغيير حالة المشرف</option>
-                        <option value="admin_permissions_updated">تحديث صلاحية مشرف</option>
-                        <option value="city_created">إنشاء مدينة</option>
-                        <option value="city_updated">تحديث مدينة</option>
-                        <option value="city_deleted">حذف مدينة</option>
-                        <option value="city_status_toggled">تغيير حالة المدينة</option>
-                        <option value="service_created">إنشاء خدمة</option>
-                        <option value="service_updated">تحديث خدمة</option>
-                        <option value="service_deleted">حذف خدمة</option>
-                        <option value="service_status_toggled">تغيير حالة الخدمة</option>
-                        <option value="free_design_deleted">حذف تصميم مجاني</option>
-                        <option value="backup_deleted">حذف نسخة احتياطية</option>
-                        <option value="settings_updated">تحديث الإعدادات</option>
-                        <option value="social_media_settings_updated">تحديث إعدادات التواصل الاجتماعي</option>
-                        <option value="seo_settings_updated">تحديث إعدادات SEO</option>
-                    </select>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="mb-3 d-flex align-items-center gap-2 flex-wrap admin_slect">
+                            <select class="form-select form-select-solid" id="admin_filter" style="max-width: 200px;">
+                                <option value="">جميع المشرفين</option>
+                                @foreach ($admins as $admin)
+                                    <option value="{{ $admin->id }}">{{ $admin->name }} ({{ $admin->email }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div class="table-responsive">
                     <table id="activity-logs-table" class="table table-bordered tabel_style w-100"
@@ -418,7 +401,8 @@
                 // Show list of deleted items
                 if (deletedItems && deletedItems.length > 0) {
                     deletedItems.forEach((item, index) => {
-                        const itemName = item.name || item.city_name || item.service_name || item.title || 'غير محدد';
+                        const itemName = item.name || item.city_name || item.service_name || item.title ||
+                            'غير محدد';
                         const itemEmail = item.email || '';
                         const itemId = item.id || '';
 
@@ -451,7 +435,8 @@
                     return false;
                 }
                 // Skip bulk deletion specific fields (handled above)
-                if (isBulkDelete && (key === 'count' || key === 'admins' || key === 'cities' || key === 'services' || key === 'items' || key === 'deleted_items')) {
+                if (isBulkDelete && (key === 'count' || key === 'admins' || key === 'cities' || key ===
+                        'services' || key === 'items' || key === 'deleted_items')) {
                     return false;
                 }
                 return value !== null && value !== undefined && value !== '';
@@ -477,7 +462,8 @@
                 let isArrayOfObjects = false;
 
                 // Check if this is a permissions array
-                const isPermissionsArray = key === 'permissions' && Array.isArray(value) && value.length > 0 && typeof value[0] === 'string';
+                const isPermissionsArray = key === 'permissions' && Array.isArray(value) && value.length > 0 &&
+                    typeof value[0] === 'string';
 
                 if (Array.isArray(value)) {
                     // Check if array contains objects (like in bulk operations)
@@ -489,9 +475,11 @@
                             if (item.name || item.city_name || item.service_name) {
                                 const name = item.name || item.city_name || item.service_name;
                                 const email = item.email ? ` (${escapeHtml(item.email)})` : '';
-                                arrayHtml += `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(name)}${email}</div>`;
+                                arrayHtml +=
+                                    `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(name)}${email}</div>`;
                             } else {
-                                arrayHtml += `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(JSON.stringify(item))}</div>`;
+                                arrayHtml +=
+                                    `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(JSON.stringify(item))}</div>`;
                             }
                         });
                         arrayHtml += '</div>';
@@ -680,8 +668,7 @@
             var dataUrl = $tableElement.data('url');
 
             var table = initDataTable(
-                '#activity-logs-table',
-                {
+                '#activity-logs-table', {
                     url: dataUrl,
                     type: 'GET',
                     data: function(d) {
@@ -705,8 +692,7 @@
                         });
                     }
                 },
-                [
-                    {
+                [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         orderable: false,
@@ -729,7 +715,8 @@
                         name: 'action',
                         render: function(data, type, row) {
                             if (type === 'display') {
-                                return '<span class="text-gray-700 fw-semibold">' + escapeHtml(formatActionName(data)) + '</span>';
+                                return '<span class="text-gray-700 fw-semibold">' + escapeHtml(
+                                    formatActionName(data)) + '</span>';
                             }
                             return data;
                         }

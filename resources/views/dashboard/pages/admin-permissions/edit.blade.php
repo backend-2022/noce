@@ -9,7 +9,7 @@
             @method('PUT')
             <div class="row">
                 @foreach ($permissionsByModule as $module => $permissions)
-                    <div class="col-lg-2 col-md-2 mb-4">
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
                         <div class="card">
                             <div class="card-header bg-light">
                                 <div class="d-flex align-items-center gap-2">
