@@ -133,10 +133,12 @@
 
             </div>
 
-            <button type="submit" class="save_informations" id="submitBtn">
-                <img src="{{ asset('assets/dashboard/images/correct_wihte.png') }}">
-                <span class="button-text">حفظ البيانات</span>
-            </button>
+            @if(auth('admin')->check() && auth('admin')->user()->can('settings.update'))
+                <button type="submit" class="save_informations" id="submitBtn">
+                    <img src="{{ asset('assets/dashboard/images/correct_wihte.png') }}">
+                    <span class="button-text">حفظ البيانات</span>
+                </button>
+            @endif
         </form>
     </div>
 @endsection

@@ -9,12 +9,16 @@
             <div class="line-body"></div>
             <div class="card-body">
                 <div class="mb-3">
-                    <a href="{{ route('dashboard.admins.create') }}" class="btn btn-primary" style="color: white;">
-                        <i class="fa fa-plus"></i> إضافة مشرف
-                    </a>
-                    <button id="datatable-delete-selected" class="btn btn-danger" style="color: white; margin-right: 10px;" disabled>
-                        <i class="fa fa-trash"></i> حذف المحدد
-                    </button>
+                    @if(auth('admin')->check() && auth('admin')->user()->can('admins.create'))
+                        <a href="{{ route('dashboard.admins.create') }}" class="btn btn-primary" style="color: white;">
+                            <i class="fa fa-plus"></i> إضافة مشرف
+                        </a>
+                    @endif
+                    @if(auth('admin')->check() && auth('admin')->user()->can('admins.delete'))
+                        <button id="datatable-delete-selected" class="btn btn-danger" style="color: white; margin-right: 10px;" disabled>
+                            <i class="fa fa-trash"></i> حذف المحدد
+                        </button>
+                    @endif
                 </div>
 
                 <div class="table-responsive">

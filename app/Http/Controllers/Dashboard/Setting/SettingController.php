@@ -29,6 +29,7 @@ class SettingController extends Controller
 
     public function index(): View|RedirectResponse
     {
+
         $defaultSettings = $this->settingRepository->getAll();
 
         $settings = [];
@@ -41,6 +42,7 @@ class SettingController extends Controller
 
     public function socialMediaIndex(): View|RedirectResponse
     {
+
         $defaultSettings = $this->settingRepository->getAll();
 
         $settings = [];
@@ -53,6 +55,7 @@ class SettingController extends Controller
 
     public function update(UpdateGeneralSettingRequest $request): JsonResponse|RedirectResponse
     {
+
         try {
             $settings = $request->except(['_token', '_method', 'logo', 'home_banner']);
 
@@ -210,6 +213,7 @@ class SettingController extends Controller
 
     public function updateSocialMedia(UpdateSocialMediaRequest $request): JsonResponse|RedirectResponse
     {
+
         try {
             $settings = $request->except(['_token', '_method']);
 
@@ -263,6 +267,7 @@ class SettingController extends Controller
 
     public function seoIndex(): View|RedirectResponse
     {
+
         $defaultSettings = $this->settingRepository->getAll();
 
         $settings = [];
@@ -275,6 +280,7 @@ class SettingController extends Controller
 
     public function updateSeo(UpdateSeoSettingRequest $request): JsonResponse|RedirectResponse
     {
+
         try {
             $settings = $request->except(['_token', '_method']);
 

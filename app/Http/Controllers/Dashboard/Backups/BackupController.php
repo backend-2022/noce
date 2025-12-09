@@ -19,6 +19,7 @@ class BackupController extends Controller
 
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
             $query = Backup::query()->orderBy('created_at', 'desc');
 
@@ -38,25 +39,31 @@ class BackupController extends Controller
                 ->addColumn('name', fn (Backup $backup) => '<span class="span_styles">' . e($backup->name) . '</span>')
                 ->addColumn('created_at', fn (Backup $backup) => '<span class="span_styles">' . optional($backup->created_at)->format('Y-m-d H:i') . '</span>')
                 ->addColumn('actions', function (Backup $backup) {
+                    $user = auth('admin')->user();
                     $totalBackups = Backup::count();
                     $canDelete = $totalBackups > 1;
 
-                    $buttons = '<div class="btns-table">
-                                    <a href="' . e(route('dashboard.backups.download', $backup)) . '" class="btn_styles amendment">
+                    $buttons = '<div class="btns-table">';
+
+                    if ($user->can('backup.view')) {
+                        $buttons .= '<a href="' . e(route('dashboard.backups.download', $backup)) . '" class="btn_styles amendment">
                                         <i class="fa fa-download"></i>
                                         تحميل
                                     </a>';
+                    }
 
-                    if ($canDelete) {
-                        $buttons .= '<a href="#" class="btn_styles delete_row" style="background-color: #dc3545; color: white;" data-url="' . e(route('dashboard.backups.destroy', $backup)) . '" data-backup-name="' . e($backup->name) . '">
-                                        <i class="fa fa-trash"></i>
-                                        حذف
-                                    </a>';
-                    } else {
-                        $buttons .= '<a href="#" class="btn_styles" style="background-color: #dc3545; color: white; opacity: 0.5; cursor: not-allowed;" title="يجب أن يكون هناك نسخة احتياطية واحدة على الأقل">
-                                        <i class="fa fa-trash"></i>
-                                        حذف
-                                    </a>';
+                    if ($user->can('backup.delete')) {
+                        if ($canDelete) {
+                            $buttons .= '<a href="#" class="btn_styles delete_row" style="background-color: #dc3545; color: white;" data-url="' . e(route('dashboard.backups.destroy', $backup)) . '" data-backup-name="' . e($backup->name) . '">
+                                            <i class="fa fa-trash"></i>
+                                            حذف
+                                        </a>';
+                        } else {
+                            $buttons .= '<a href="#" class="btn_styles" style="background-color: #dc3545; color: white; opacity: 0.5; cursor: not-allowed;" title="يجب أن يكون هناك نسخة احتياطية واحدة على الأقل">
+                                            <i class="fa fa-trash"></i>
+                                            حذف
+                                        </a>';
+                        }
                     }
 
                     $buttons .= '</div>';
@@ -72,6 +79,7 @@ class BackupController extends Controller
 
     public function download(Backup $backup)
     {
+
         try {
             $disk = Storage::disk('local');
 
@@ -89,6 +97,7 @@ class BackupController extends Controller
 
     public function destroy(Request $request, $backup)
     {
+
         try {
             // Check if the model exists
             $backupModel = Backup::find($backup);

@@ -27,6 +27,7 @@ class ServiceController extends Controller
 
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
             $query = Service::query()->orderBy('created_at', 'desc');
 
@@ -47,6 +48,13 @@ class ServiceController extends Controller
                 ->addColumn('name', fn (Service $service) => '<span class="span_styles">' . e($service->name) . '</span>')
                 ->addColumn('description', fn (Service $service) => '<span class="span_styles">' . e($service->description ?? '-') . '</span>')
                 ->addColumn('status', function (Service $service) {
+                    $user = auth('admin')->user();
+
+                    // Only show toggle if user has update permission
+                    if (!$user->can('services.update')) {
+                        return '<span class="span_styles">' . ($service->is_active ? 'مفعل' : 'غير مفعل') . '</span>';
+                    }
+
                     $inputId = 'flexSwitchCheckChecked' . $service->id;
 
                     $form = '<form method="POST" action="' . e(route('dashboard.services.toggle-status', $service)) . '" style="display:inline;">'
@@ -60,16 +68,24 @@ class ServiceController extends Controller
                     return $form;
                 })
                 ->addColumn('actions', function (Service $service) {
-                    $buttons = '<div class="btns-table">
-                                    <a href="' . e(route('dashboard.services.edit', $service)) . '" class="btn_styles amendment">
+                    $user = auth('admin')->user();
+                    $buttons = '<div class="btns-table">';
+
+                    if ($user->can('services.update')) {
+                        $buttons .= '<a href="' . e(route('dashboard.services.edit', $service)) . '" class="btn_styles amendment">
                                         <i class="fa fa-edit"></i>
                                         تعديل
-                                    </a>
-                                    <a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.services.destroy', $service)) . '" data-service-name="' . e($service->name) . '">
+                                    </a>';
+                    }
+
+                    if ($user->can('services.delete')) {
+                        $buttons .= '<a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.services.destroy', $service)) . '" data-service-name="' . e($service->name) . '">
                                         <i class="fa fa-trash"></i>
                                         حذف
-                                    </a>
-                                </div>';
+                                    </a>';
+                    }
+
+                    $buttons .= '</div>';
 
                     return $buttons;
                 })
@@ -82,11 +98,13 @@ class ServiceController extends Controller
 
     public function create()
     {
+
         return view('dashboard.pages.services.create');
     }
 
     public function store(CreateServiceRequest $request)
     {
+
         try {
             $data = $request->validated();
             $data['is_active'] = $request->has('is_active') ? true : false;
@@ -111,11 +129,13 @@ class ServiceController extends Controller
 
     public function edit(Service $service)
     {
+
         return view('dashboard.pages.services.edit', compact('service'));
     }
 
     public function update(UpdateServiceRequest $request, Service $service)
     {
+
         try {
             $data = $request->validated();
             $data['is_active'] = $request->has('is_active') ? true : false;
@@ -136,6 +156,7 @@ class ServiceController extends Controller
 
     public function destroy(Request $request, $service)
     {
+
         try {
             // Check if the model exists (including soft-deleted ones)
             // Handle case where user clicks delete multiple times quickly

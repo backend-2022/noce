@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.admin' => \App\Http\Middleware\AuthenticateAdmin::class,
             'api.key' => \App\Http\Middleware\ApiKeyMiddleware::class,
+            'permission' => \App\Http\Middleware\PermissionMiddleware::class,
         ]);
         $middleware->redirectGuestsTo(function ($request) {
             if ($request->is('api/*')) {
