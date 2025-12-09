@@ -2,7 +2,7 @@
   <footer>
       <div class="footer-content">
           <div class="footer-brand"> {{ setting('site_name') ?? 'NOCE - نوتش' }} </div>
-          <p>نصمم أحلامك بلمسات فنية مميزة</p>
+          <p>{{ setting('footer_description') ?? 'نصمم أحلامك بلمسات فنية مميزة' }}</p>
 
           <div class="social-links">
               @php
