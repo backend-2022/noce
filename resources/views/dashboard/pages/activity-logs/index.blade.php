@@ -1,7 +1,6 @@
 @extends('dashboard.layouts.app')
 
 @section('pageTitle', 'سجل النشاطات')
-
 @section('content')
 
     <div class="inner-body">
@@ -32,6 +31,21 @@
                         </thead>
                         <tbody></tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Details Modal -->
+    <div class="modal fade" id="logDetailsModal" tabindex="-1" aria-labelledby="logDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logDetailsModalLabel">تفاصيل السجل</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="logDetailsContent">
+                    <!-- Content will be populated by JavaScript -->
                 </div>
             </div>
         </div>
@@ -215,9 +229,9 @@
                 'admin_id': 'معرف المشرف',
                 'admin_name': 'اسم المشرف',
                 'admin_email': 'بريد المشرف',
-                'target_admin_id': 'معرف المشرف المستهدف',
-                'target_admin_name': 'اسم المشرف المستهدف',
-                'target_admin_email': 'بريد المشرف المستهدف',
+                'target_admin_id': 'معرف المشرف ا ',
+                'target_admin_name': 'اسم المشرف ا ',
+                'target_admin_email': 'بريد المشرف ا ',
 
                 // City related
                 'city_id': 'معرف المدينة',
@@ -466,7 +480,6 @@
                         let permissionsHtml = '<div class="d-flex flex-wrap gap-1">';
                         value.forEach((permission) => {
                             const translatedPermission = formatPermissionName(permission);
-                            permissionsHtml += `<span class="badge bg-info text-white" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; white-space: nowrap;">${escapeHtml(translatedPermission)}</span>`;
                         });
                         permissionsHtml += '</div>';
                         displayValue = permissionsHtml;
@@ -516,6 +529,78 @@
             const div = document.createElement('div');
             div.textContent = String(text);
             return div.innerHTML;
+        }
+
+        function formatTimestamp(timestamp) {
+            try {
+                if (!timestamp) {
+                    return 'غير محدد';
+                }
+                const date = new Date(timestamp);
+                if (isNaN(date.getTime())) {
+                    return timestamp;
+                }
+                // Format as DD-MM-YYYY HH:mm
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes} ${day}-${month}-${year}`;
+            } catch (e) {
+                console.error('Error formatting timestamp:', e);
+                return timestamp;
+            }
+        }
+
+        function renderLogObjectDetails(logData) {
+            if (!logData || typeof logData !== 'object') {
+                return 'لا توجد بيانات';
+            }
+
+            let html = '<pre style="white-space: pre-wrap; word-wrap: break-word; font-family: inherit; font-size: 0.9rem; margin: 0; padding: 0;">';
+
+            const entries = Object.entries(logData).filter(([key, value]) =>
+                value !== null && value !== undefined && value !== ''
+            );
+
+            if (entries.length === 0) {
+                return 'لا توجد بيانات';
+            }
+
+            entries.forEach(([key, value]) => {
+                const keyLabel = formatKeyName(key);
+                let displayValue = value;
+
+                // Handle different value types
+                if (Array.isArray(value)) {
+                    if (value.length === 0) {
+                        displayValue = 'فارغ';
+                    } else if (typeof value[0] === 'object') {
+                        displayValue = JSON.stringify(value, null, 2);
+                    } else {
+                        displayValue = value.join(', ');
+                    }
+                } else if (typeof value === 'object') {
+                    displayValue = JSON.stringify(value, null, 2);
+                } else if (typeof value === 'boolean') {
+                    displayValue = value ? 'نعم' : 'لا';
+                } else {
+                    displayValue = String(value);
+                }
+
+                // Format special fields
+                if (key === 'timestamp' && typeof value === 'string') {
+                    displayValue = formatTimestamp(value);
+                } else if (key === 'action' && typeof value === 'string') {
+                    displayValue = formatActionName(value);
+                }
+
+                html += escapeHtml(keyLabel) + ': ' + escapeHtml(String(displayValue)) + '\n';
+            });
+
+            html += '</pre>';
+            return html;
         }
 
         $(document).ready(function() {
@@ -583,7 +668,19 @@
                         searchable: true,
                         render: function(data, type, row) {
                             if (type === 'display') {
-                                return renderActivityDetails(data, type, row);
+                                let detailsHtml = renderActivityDetails(data, type, row);
+
+                                // Add eye icon button
+                                try {
+                                    const rawData = row.raw_data || row || {};
+                                    const jsonString = JSON.stringify(rawData);
+                                    const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+                                    const buttonHtml = '<div class="mt-2"><button type="button" class="btn btn-sm btn-primary view-log-btn" data-log-encoded="' + encodedData + '" title="عرض التفاصيل الكاملة" style="min-width: 40px; padding: 0.25rem 0.5rem;"><i class="fa fa-eye"></i></button></div>';
+                                    return detailsHtml + buttonHtml;
+                                } catch (e) {
+                                    console.error('Error rendering view button:', e, row);
+                                    return detailsHtml;
+                                }
                             }
                             return JSON.stringify(data);
                         }
@@ -596,6 +693,23 @@
             // Filter change handlers
             $('#admin_filter').on('change', function() {
                 table.ajax.reload(null, false);
+            });
+
+            // Handle view log details button click
+            $(document).on('click', '.view-log-btn', function() {
+                try {
+                    const encodedData = $(this).attr('data-log-encoded');
+                    // Decode Unicode-safe base64
+                    const jsonString = decodeURIComponent(escape(atob(encodedData)));
+                    const logData = JSON.parse(jsonString);
+                    const modalContent = renderLogObjectDetails(logData);
+
+                    $('#logDetailsContent').html(modalContent);
+                    $('#logDetailsModal').modal('show');
+                } catch (e) {
+                    console.error('Error parsing log data:', e);
+                    toastr.error('حدث خطأ في تحميل تفاصيل السجل');
+                }
             });
         });
     </script>
