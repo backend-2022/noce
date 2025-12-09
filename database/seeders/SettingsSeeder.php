@@ -29,6 +29,10 @@ class SettingsSeeder extends Seeder
                 'value' => null,
             ],
             [
+                'key' => 'footer_description',
+                'value' => 'نصمم أحلامك بلمسات فنية مميزة',
+            ],
+            [
                 'key' => 'logo',
                 'value' => null,
             ],

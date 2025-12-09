@@ -51,6 +51,14 @@
                     </div>
                 </div>
 
+                <!-- Footer Description -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <label class="label_style" for="footer_description">الوصف بال footer</label>
+                        <textarea id="footer_description" name="footer_description" class="form-control" rows="3" placeholder="وصف ال footer">{{ old('footer_description', $settings['footer_description'] ?? '') }}</textarea>
+                    </div>
+                </div>
+
                 <!-- Map Link -->
                 <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
                     <div class="div_input_label">
