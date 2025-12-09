@@ -28,6 +28,7 @@ class AdminController extends Controller
 
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
             $query = Admin::query()->orderBy('created_at', 'desc');
 
@@ -111,11 +112,13 @@ class AdminController extends Controller
 
     public function create()
     {
+
         return view('dashboard.pages.admins.create');
     }
 
     public function store(CreateAdminRequest $request)
     {
+
         try {
             $data = $request->validated();
             $data['is_active'] = $request->has('is_active') ? true : false;
@@ -148,12 +151,14 @@ class AdminController extends Controller
 
     public function edit(Admin $admin)
     {
+
         $imageUrl = $this->getFileUrl($admin->image, null, 'public', 'white_img.png');
         return view('dashboard.pages.admins.edit', compact('admin', 'imageUrl'));
     }
 
     public function update(UpdateAdminRequest $request, Admin $admin)
     {
+
         try {
             $data = $request->validated();
             $data['is_active'] = $request->has('is_active') ? true : false;
@@ -193,6 +198,7 @@ class AdminController extends Controller
 
     public function destroy(Request $request, $admin)
     {
+
         try {
             // Check if the model exists (including soft-deleted ones)
             // Handle case where user clicks delete multiple times quickly
@@ -260,6 +266,7 @@ class AdminController extends Controller
 
     public function bulkDestroy(Request $request)
     {
+
         $ids = $request->input('ids', []);
 
         if (!is_array($ids) || empty($ids)) {

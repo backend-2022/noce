@@ -29,6 +29,7 @@
                         <span class="hide_span">عرض اقل</span>
                     </button>
 
+                    @if(auth('admin')->check() && auth('admin')->user()->can('cities.view'))
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.cities.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.cities.') }}" href="{{ route('dashboard.cities.index') }}">
                             <div class="img_div">
@@ -38,7 +39,9 @@
                         </a>
 
                     </li>
+                    @endif
 
+                    @if(auth('admin')->check() && auth('admin')->user()->can('services.view'))
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.services.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.services.') }}" href="{{ route('dashboard.services.index') }}">
                             <div class="img_div">
@@ -48,7 +51,9 @@
                         </a>
 
                     </li>
+                    @endif
 
+                    @if(auth('admin')->check() && auth('admin')->user()->can('free-services.view'))
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.free-designs.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.free-designs.') }}" href="{{ route('dashboard.free-designs.index') }}">
                             <div class="img_div">
@@ -58,7 +63,9 @@
                         </a>
 
                     </li>
+                    @endif
 
+                    @if(auth('admin')->check() && auth('admin')->user()->can('admins.view'))
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.admins.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.admins.') }}" href="{{ route('dashboard.admins.index') }}">
                             <div class="img_div">
@@ -68,7 +75,21 @@
                         </a>
 
                     </li>
+                    @endif
 
+                    @if(auth('admin')->check() && auth('admin')->user()->can('permissions.view'))
+                    <li class="sidebar-list {{ isActiveRouteGroup('dashboard.admin-permissions.') }}">
+                        <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.admin-permissions.') }}" href="{{ route('dashboard.admin-permissions.index') }}">
+                            <div class="img_div">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
+                            </div>
+                            <span class="hide_span">إدارة الصلاحيات</span>
+                        </a>
+
+                    </li>
+                    @endif
+
+                    @if(auth('admin')->check() && auth('admin')->user()->can('backup.view'))
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.backups.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.backups.') }}" href="{{ route('dashboard.backups.index') }}">
                             <div class="img_div">
@@ -78,7 +99,9 @@
                         </a>
 
                     </li>
+                    @endif
 
+                    @if(auth('admin')->check() && auth('admin')->user()->can('activity-logs.view'))
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.activity-logs.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.activity-logs.') }}" href="{{ route('dashboard.activity-logs.index') }}">
                             <div class="img_div">
@@ -88,11 +111,13 @@
                         </a>
 
                     </li>
+                    @endif
 
                 </div>
 
 
                 <div class="bottom_div">
+                    @if(auth('admin')->check() && auth('admin')->user()->can('settings.view'))
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.settings.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.settings.') }}" href="{{ route('dashboard.settings.index') }}">
                             <div class="img_div">
@@ -102,6 +127,7 @@
                         </a>
 
                     </li>
+                    @endif
 
                     <li class="sidebar-list ">
                         <form action="{{ route('dashboard.logout') }}" method="POST" style="display: inline;">

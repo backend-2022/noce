@@ -10,9 +10,11 @@
         </div>
         <div class="card-body">
             <div class="mb-3">
-                <a href="{{ route('dashboard.cities.create') }}" class="btn btn-primary" style="color: white;">
-                    <i class="fa fa-plus"></i> إضافة مدينة
-                </a>
+                @if(auth('admin')->check() && auth('admin')->user()->can('cities.create'))
+                    <a href="{{ route('dashboard.cities.create') }}" class="btn btn-primary" style="color: white;">
+                        <i class="fa fa-plus"></i> إضافة مدينة
+                    </a>
+                @endif
             </div>
 
             <div class="table-responsive">

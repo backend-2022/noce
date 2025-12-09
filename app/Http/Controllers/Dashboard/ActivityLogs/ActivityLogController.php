@@ -17,6 +17,7 @@ class ActivityLogController extends Controller
 
     public function index(Request $request): View|JsonResponse
     {
+
         if ($request->expectsJson() || $request->ajax()) {
             return $this->getActivityLogsData($request);
         }
@@ -30,6 +31,7 @@ class ActivityLogController extends Controller
 
     public function getActivityLogsData(Request $request): JsonResponse
     {
+
         try {
             $logFile = storage_path('logs/admin-activity.log');
 

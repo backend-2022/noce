@@ -28,6 +28,7 @@ class FreeDesignController extends Controller
      */
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
             $query = $this->freeDesignRepository->buildQueryWithRelations()
                 ->orderBy('created_at', 'desc');
@@ -55,12 +56,17 @@ class FreeDesignController extends Controller
                 })
                 ->addColumn('created_at', fn (FreeDesign $freeDesign) => '<span class="span_styles">' . optional($freeDesign->created_at)->format('Y-m-d H:i') . '</span>')
                 ->addColumn('actions', function (FreeDesign $freeDesign) {
-                    $buttons = '<div class="btns-table">
-                                    <a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.free-designs.destroy', $freeDesign)) . '" data-design-name="' . e($freeDesign->name) . '">
+                    $user = auth('admin')->user();
+                    $buttons = '<div class="btns-table">';
+
+                    if ($user->can('free-services.delete')) {
+                        $buttons .= '<a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.free-designs.destroy', $freeDesign)) . '" data-design-name="' . e($freeDesign->name) . '">
                                         <i class="fa fa-trash"></i>
                                         حذف
-                                    </a>
-                                </div>';
+                                    </a>';
+                    }
+
+                    $buttons .= '</div>';
 
                     return $buttons;
                 })
@@ -76,6 +82,7 @@ class FreeDesignController extends Controller
      */
     public function destroy(Request $request, $freeDesign)
     {
+
         try {
             // Check if the model exists (including soft-deleted ones)
             // Handle case where user clicks delete multiple times quickly
