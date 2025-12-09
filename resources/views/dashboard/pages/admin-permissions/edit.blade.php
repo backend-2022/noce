@@ -45,41 +45,6 @@
                                     </h6>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                @foreach ($permissions as $permission)
-                                    @php
-                                        $isView = $permission['action'] === 'view';
-                                        // Skip view permission as it's now in header
-if ($isView) {
-    continue;
-}
-$shouldBeChecked = $permission['is_assigned'] ?? false;
-                                    @endphp
-                                    <div class="form-check mb-3 d-flex align-items-center">
-                                        <input class="form-check-input me-2 module-{{ $module }}" type="checkbox"
-                                            name="permissions[]" value="{{ $permission['name'] }}"
-                                            id="permission_{{ $permission['id'] }}"
-                                            data-action="{{ $permission['action'] }}"
-                                            {{ $shouldBeChecked ? 'checked' : '' }}
-                                            {{ !$permission['can_assign'] ? 'disabled' : '' }}
-                                            style="margin-top: 0; flex-shrink: 0;">
-                                        <label class="form-check-label mb-0" for="permission_{{ $permission['id'] }}"
-                                            style="cursor: pointer; user-select: none;">
-                                            @php
-                                                $actionNames = [
-                                                    'view' => 'عرض',
-                                                    'create' => 'إضافة',
-                                                    'update' => 'تعديل',
-                                                    'delete' => 'حذف',
-                                                ];
-                                                $actionName =
-                                                    $actionNames[$permission['action']] ?? $permission['action'];
-                                            @endphp
-                                            {{ $actionName }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -108,41 +73,6 @@ $shouldBeChecked = $permission['is_assigned'] ?? false;
                 });
             }
 
-            // Handle view permission change in header
-            $('.view-permission-header').on('change', function() {
-                const module = $(this).data('module');
-                const isChecked = $(this).is(':checked');
-                const otherPermissions = $(`.module-${module}:not(.view-permission-header):not(:disabled)`);
-
-                if (!isChecked) {
-                    // If view is unchecked, uncheck all other permissions
-                    otherPermissions.prop('checked', false);
-                }
-            });
-
-            // Handle other permissions change - if unchecked, uncheck view
-            $(document).on('change', '[class*="module-"]:not(.view-permission-header)', function() {
-                const $this = $(this);
-                const classList = $this.attr('class').split(' ');
-                let module = '';
-
-                // Find the module class
-                classList.forEach(function(cls) {
-                    if (cls.startsWith('module-')) {
-                        module = cls.replace('module-', '');
-                    }
-                });
-
-                if (module) {
-                    const viewCheckbox = $(`.view-permission-header[data-module="${module}"]`);
-                    // If any permission is checked, ensure view is checked
-                    const hasCheckedPermission = $(`.module-${module}:not(.view-permission-header):checked`)
-                        .length > 0;
-                    if (hasCheckedPermission && !viewCheckbox.is(':checked')) {
-                        viewCheckbox.prop('checked', true);
-                    }
-                }
-            });
         });
     </script>
 @endpush

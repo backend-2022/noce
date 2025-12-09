@@ -56,15 +56,12 @@ class FreeDesignController extends Controller
                 })
                 ->addColumn('created_at', fn (FreeDesign $freeDesign) => '<span class="span_styles">' . optional($freeDesign->created_at)->format('Y-m-d H:i') . '</span>')
                 ->addColumn('actions', function (FreeDesign $freeDesign) {
-                    $user = auth('admin')->user();
                     $buttons = '<div class="btns-table">';
 
-                    if ($user->can('free-services.delete')) {
-                        $buttons .= '<a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.free-designs.destroy', $freeDesign)) . '" data-design-name="' . e($freeDesign->name) . '">
-                                        <i class="fa fa-trash"></i>
-                                        حذف
-                                    </a>';
-                    }
+                    $buttons .= '<a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.free-designs.destroy', $freeDesign)) . '" data-design-name="' . e($freeDesign->name) . '">
+                                    <i class="fa fa-trash"></i>
+                                    حذف
+                                </a>';
 
                     $buttons .= '</div>';
 

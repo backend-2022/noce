@@ -24,7 +24,7 @@ class PermissionsSeeder extends Seeder
             'permissions',
         ];
 
-        $actions = ['view', 'create', 'update', 'delete'];
+        $actions = ['view'];
 
         // Create permissions for each module and action combination
         foreach ($modules as $module) {

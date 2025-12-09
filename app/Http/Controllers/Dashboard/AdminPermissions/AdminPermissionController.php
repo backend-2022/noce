@@ -95,8 +95,9 @@ class AdminPermissionController extends Controller
                 ->with('error', 'لا يمكنك تعديل صلاحياتك الخاصة من هنا');
         }
 
-        // Get all permissions grouped by module
+        // Get all permissions grouped by module (only view permissions)
         $allPermissions = Permission::where('guard_name', 'admin')
+            ->where('name', 'like', '%.view')
             ->orderBy('name')
             ->get();
 
@@ -137,14 +138,12 @@ class AdminPermissionController extends Controller
             }
         }
 
-        // Sort permissions within each module by action order
-        $actionOrder = ['view', 'create', 'update', 'delete'];
+        // Filter to only show view permissions
         foreach ($permissionsByModule as $module => &$permissions) {
-            usort($permissions, function ($a, $b) use ($actionOrder) {
-                $aIndex = array_search($a['action'], $actionOrder);
-                $bIndex = array_search($b['action'], $actionOrder);
-                return ($aIndex !== false ? $aIndex : 999) - ($bIndex !== false ? $bIndex : 999);
+            $permissions = array_filter($permissions, function ($permission) {
+                return $permission['action'] === 'view';
             });
+            $permissions = array_values($permissions); // Re-index array
         }
 
         // Reorder modules according to the defined order
@@ -187,10 +186,13 @@ class AdminPermissionController extends Controller
         // Get requested permissions from form
         $requestedPermissions = $request->input('permissions', []);
 
-        // Get all available permissions
-        $allAvailablePermissions = Permission::where('guard_name', 'admin')->pluck('name')->toArray();
+        // Get all available view permissions only
+        $allAvailablePermissions = Permission::where('guard_name', 'admin')
+            ->where('name', 'like', '%.view')
+            ->pluck('name')
+            ->toArray();
 
-        // Allow all requested permissions that exist in the system
+        // Allow only view permissions that exist in the system
         $allowedPermissions = array_intersect($requestedPermissions, $allAvailablePermissions);
 
         // Sync permissions (this will remove all and add only the allowed ones)

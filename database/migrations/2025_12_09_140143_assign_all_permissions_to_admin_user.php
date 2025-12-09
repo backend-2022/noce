@@ -30,7 +30,7 @@ return new class extends Migration
             'permissions',
         ];
 
-        $actions = ['view', 'create', 'update', 'delete'];
+        $actions = ['view'];
 
         // Create permissions for each module and action combination
         foreach ($modules as $module) {
@@ -64,8 +64,11 @@ return new class extends Migration
             ]);
         }
 
-        // Get all permissions for the admin guard
-        $allPermissions = Permission::where('guard_name', 'admin')->pluck('name')->toArray();
+        // Get all view permissions for the admin guard
+        $allPermissions = Permission::where('guard_name', 'admin')
+            ->where('name', 'like', '%.view')
+            ->pluck('name')
+            ->toArray();
 
         if (!empty($allPermissions)) {
             // Assign all permissions to the admin (whether it existed or was just created)
