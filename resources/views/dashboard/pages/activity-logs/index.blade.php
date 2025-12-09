@@ -14,6 +14,28 @@
                             <option value="{{ $admin->id }}">{{ $admin->name }} ({{ $admin->email }})</option>
                         @endforeach
                     </select>
+                    <select class="form-select form-select-solid w-200px" id="action_filter" style="max-width: 200px;">
+                        <option value="">جميع الإجراءات</option>
+                        <option value="admin_created">إنشاء مشرف</option>
+                        <option value="admin_updated">تحديث مشرف</option>
+                        <option value="admin_deleted">حذف مشرف</option>
+                        <option value="admin_bulk_deleted">حذف جماعي للمشرفين</option>
+                        <option value="admin_status_toggled">تغيير حالة المشرف</option>
+                        <option value="admin_permissions_updated">تحديث صلاحية مشرف</option>
+                        <option value="city_created">إنشاء مدينة</option>
+                        <option value="city_updated">تحديث مدينة</option>
+                        <option value="city_deleted">حذف مدينة</option>
+                        <option value="city_status_toggled">تغيير حالة المدينة</option>
+                        <option value="service_created">إنشاء خدمة</option>
+                        <option value="service_updated">تحديث خدمة</option>
+                        <option value="service_deleted">حذف خدمة</option>
+                        <option value="service_status_toggled">تغيير حالة الخدمة</option>
+                        <option value="free_design_deleted">حذف تصميم مجاني</option>
+                        <option value="backup_deleted">حذف نسخة احتياطية</option>
+                        <option value="settings_updated">تحديث الإعدادات</option>
+                        <option value="social_media_settings_updated">تحديث إعدادات التواصل الاجتماعي</option>
+                        <option value="seo_settings_updated">تحديث إعدادات SEO</option>
+                    </select>
                 </div>
 
                 <div class="table-responsive">
@@ -39,12 +61,12 @@
     <!-- Log Details Modal -->
     <div class="modal fade" id="logDetailsModal" tabindex="-1" aria-labelledby="logDetailsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+            <div class="modal-content" dir="rtl">
                 <div class="modal-header">
                     <h5 class="modal-title" id="logDetailsModalLabel">تفاصيل السجل</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="logDetailsContent">
+                <div class="modal-body" id="logDetailsContent" dir="rtl">
                     <!-- Content will be populated by JavaScript -->
                 </div>
             </div>
@@ -531,6 +553,24 @@
             return div.innerHTML;
         }
 
+        // Function to fix Arabic text direction using Unicode Bidirectional Isolation
+        function fixArabicDirection(text) {
+            if (!text || typeof text !== 'string') {
+                return text;
+            }
+
+            // Check if text contains Arabic characters
+            const arabicRegex = /[\u0600-\u06FF]/;
+            if (!arabicRegex.test(text)) {
+                return text;
+            }
+
+            const RLE = '\u202B'; // Right-to-Left Embedding
+            const PDF = '\u202C'; // Pop Directional Formatting
+
+            return RLE + text + PDF;
+        }
+
         function formatTimestamp(timestamp) {
             try {
                 if (!timestamp) {
@@ -558,7 +598,7 @@
                 return 'لا توجد بيانات';
             }
 
-            let html = '<pre style="white-space: pre-wrap; word-wrap: break-word; font-family: inherit; font-size: 0.9rem; margin: 0; padding: 0;">';
+            let html = '<div dir="rtl" style="font-family: inherit; font-size: 0.9rem;">';
 
             const entries = Object.entries(logData).filter(([key, value]) =>
                 value !== null && value !== undefined && value !== ''
@@ -568,21 +608,32 @@
                 return 'لا توجد بيانات';
             }
 
+            // Helper function to detect if text contains Arabic
+            function containsArabic(text) {
+                const arabicRegex = /[\u0600-\u06FF]/;
+                return arabicRegex.test(text);
+            }
+
             entries.forEach(([key, value]) => {
                 const keyLabel = formatKeyName(key);
                 let displayValue = value;
+                let isComplexValue = false;
+                let isArray = false;
 
                 // Handle different value types
                 if (Array.isArray(value)) {
+                    isArray = true;
                     if (value.length === 0) {
                         displayValue = 'فارغ';
                     } else if (typeof value[0] === 'object') {
                         displayValue = JSON.stringify(value, null, 2);
+                        isComplexValue = true;
                     } else {
                         displayValue = value.join(', ');
                     }
                 } else if (typeof value === 'object') {
                     displayValue = JSON.stringify(value, null, 2);
+                    isComplexValue = true;
                 } else if (typeof value === 'boolean') {
                     displayValue = value ? 'نعم' : 'لا';
                 } else {
@@ -596,10 +647,31 @@
                     displayValue = formatActionName(value);
                 }
 
-                html += escapeHtml(keyLabel) + ': ' + escapeHtml(String(displayValue)) + '\n';
+                const displayValueStr = String(displayValue);
+                const hasArabic = containsArabic(displayValueStr);
+
+                // Use different styling for complex values (JSON objects/arrays)
+                if (isComplexValue) {
+                    html += '<div style="margin-bottom: 8px; padding: 8px; background-color: #f8f9fa; border-radius: 4px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">';
+                    html += '<div dir="rtl" style="margin-bottom: 4px; font-weight: bold; color: #333; text-align: right;">' + escapeHtml(keyLabel) + ':</div>';
+                    html += '<div dir="ltr" style="direction: ltr; text-align: left; unicode-bidi: embed;">' + escapeHtml(displayValueStr) + '</div>';
+                    html += '</div>';
+                } else {
+                    // For simple values, use RTL if contains Arabic, otherwise use appropriate direction
+                    const valueDir = hasArabic ? 'rtl' : 'ltr';
+                    const fixedValue = hasArabic ? fixArabicDirection(displayValueStr) : displayValueStr;
+                    html += '<div dir="rtl" style="margin-bottom: 8px; padding: 8px; background-color: #f8f9fa; border-radius: 4px; text-align: right;">';
+                    html += '<span style="font-weight: bold; color: #333; margin-left: 8px;">' + escapeHtml(keyLabel) + ':</span> ';
+                    if (hasArabic) {
+                        html += '<span dir="rtl" style="color: #666; unicode-bidi: embed; direction: rtl; text-align: right; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
+                    } else {
+                        html += '<span dir="ltr" style="color: #666; unicode-bidi: embed; direction: ltr; text-align: left; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
+                    }
+                    html += '</div>';
+                }
             });
 
-            html += '</pre>';
+            html += '</div>';
             return html;
         }
 
@@ -615,6 +687,7 @@
                     data: function(d) {
                         // Add custom filters
                         d.admin_id = $('#admin_filter').val() || '';
+                        d.action = $('#action_filter').val() || '';
                     },
                     dataSrc: function(json) {
                         if (json.error) {
@@ -685,13 +758,27 @@
                             return JSON.stringify(data);
                         }
                     }
-                ]
+                ],
+                [],
+                null,
+                10,
+                {
+                    dom: '<"row marg_row">' +
+                         '<"row table-design"<"col-12  table-design-inner"tr>>' +
+                         '<"row"<"col-sm-12 d-flex my-3 justify-content-center text-end"p>>' +
+                         '<"row"<"col-12 d-flex justify-content-center"i>>',
+                    searching: false
+                }
             );
 
             window.activityLogsTable = table;
 
             // Filter change handlers
             $('#admin_filter').on('change', function() {
+                table.ajax.reload(null, false);
+            });
+
+            $('#action_filter').on('change', function() {
                 table.ajax.reload(null, false);
             });
 
