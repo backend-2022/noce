@@ -8,14 +8,19 @@
         <div class="card">
             <div class="line-body"></div>
             <div class="card-body">
-                <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-                    <select class="form-select form-select-solid w-200px" id="admin_filter" style="max-width: 200px;">
-                        <option value="">جميع المشرفين</option>
-                        @foreach($admins as $admin)
-                            <option value="{{ $admin->id }}">{{ $admin->name }} ({{ $admin->email }})</option>
-                        @endforeach
-                    </select>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="mb-3 d-flex align-items-center gap-2 flex-wrap admin_slect">
+                            <select class="form-select form-select-solid" id="admin_filter" style="max-width: 200px;">
+                                <option value="">جميع المشرفين</option>
+                                @foreach ($admins as $admin)
+                                    <option value="{{ $admin->id }}">{{ $admin->name }} ({{ $admin->email }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div class="table-responsive">
                     <table id="activity-logs-table" class="table table-bordered tabel_style w-100"
@@ -382,7 +387,8 @@
                 // Show list of deleted items
                 if (deletedItems && deletedItems.length > 0) {
                     deletedItems.forEach((item, index) => {
-                        const itemName = item.name || item.city_name || item.service_name || item.title || 'غير محدد';
+                        const itemName = item.name || item.city_name || item.service_name || item.title ||
+                            'غير محدد';
                         const itemEmail = item.email || '';
                         const itemId = item.id || '';
 
@@ -415,7 +421,8 @@
                     return false;
                 }
                 // Skip bulk deletion specific fields (handled above)
-                if (isBulkDelete && (key === 'count' || key === 'admins' || key === 'cities' || key === 'services' || key === 'items' || key === 'deleted_items')) {
+                if (isBulkDelete && (key === 'count' || key === 'admins' || key === 'cities' || key ===
+                        'services' || key === 'items' || key === 'deleted_items')) {
                     return false;
                 }
                 return value !== null && value !== undefined && value !== '';
@@ -441,7 +448,8 @@
                 let isArrayOfObjects = false;
 
                 // Check if this is a permissions array
-                const isPermissionsArray = key === 'permissions' && Array.isArray(value) && value.length > 0 && typeof value[0] === 'string';
+                const isPermissionsArray = key === 'permissions' && Array.isArray(value) && value.length > 0 &&
+                    typeof value[0] === 'string';
 
                 if (Array.isArray(value)) {
                     // Check if array contains objects (like in bulk operations)
@@ -453,9 +461,11 @@
                             if (item.name || item.city_name || item.service_name) {
                                 const name = item.name || item.city_name || item.service_name;
                                 const email = item.email ? ` (${escapeHtml(item.email)})` : '';
-                                arrayHtml += `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(name)}${email}</div>`;
+                                arrayHtml +=
+                                    `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(name)}${email}</div>`;
                             } else {
-                                arrayHtml += `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(JSON.stringify(item))}</div>`;
+                                arrayHtml +=
+                                    `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(JSON.stringify(item))}</div>`;
                             }
                         });
                         arrayHtml += '</div>';
@@ -466,7 +476,8 @@
                         let permissionsHtml = '<div class="d-flex flex-wrap gap-1">';
                         value.forEach((permission) => {
                             const translatedPermission = formatPermissionName(permission);
-                            permissionsHtml += `<span class="badge bg-info text-white" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; white-space: nowrap;">${escapeHtml(translatedPermission)}</span>`;
+                            permissionsHtml +=
+                                `<span class="badge bg-info text-white" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; white-space: nowrap;">${escapeHtml(translatedPermission)}</span>`;
                         });
                         permissionsHtml += '</div>';
                         displayValue = permissionsHtml;
@@ -523,8 +534,7 @@
             var dataUrl = $tableElement.data('url');
 
             var table = initDataTable(
-                '#activity-logs-table',
-                {
+                '#activity-logs-table', {
                     url: dataUrl,
                     type: 'GET',
                     data: function(d) {
@@ -547,8 +557,7 @@
                         });
                     }
                 },
-                [
-                    {
+                [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         orderable: false,
@@ -571,7 +580,8 @@
                         name: 'action',
                         render: function(data, type, row) {
                             if (type === 'display') {
-                                return '<span class="text-gray-700 fw-semibold">' + escapeHtml(formatActionName(data)) + '</span>';
+                                return '<span class="text-gray-700 fw-semibold">' + escapeHtml(
+                                    formatActionName(data)) + '</span>';
                             }
                             return data;
                         }

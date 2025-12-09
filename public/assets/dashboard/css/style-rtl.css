@@ -57633,6 +57633,15 @@ input[type=number]::-webkit-outer-spin-button {
     overflow: hidden;
 }
 
+.admin_slect .form-select.form-select-solid{
+    max-width: 100% !important;
+}
+
+.admin_slect .form-select {
+    background-position: left .75rem center;
+    padding: 5px 10px 5px 5px;
+}
+
 
 /* end updates */
 
