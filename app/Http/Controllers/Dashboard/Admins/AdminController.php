@@ -175,9 +175,18 @@ class AdminController extends Controller
                 $data['image'] = $path;
             }
 
-            // Remove password fields if not provided
-            if (empty($data['password'])) {
-                unset($data['password']);
+            // Handle password update - only remove if not provided or empty after trimming
+            if (isset($data['password'])) {
+                $password = trim($data['password']);
+                if (empty($password)) {
+                    unset($data['password']);
+                    unset($data['password_confirmation']);
+                } else {
+                    // Ensure password is kept in data for hashing in repository
+                    $data['password'] = $password;
+                }
+            } else {
+                // Password not in request, remove confirmation if present
                 unset($data['password_confirmation']);
             }
 
