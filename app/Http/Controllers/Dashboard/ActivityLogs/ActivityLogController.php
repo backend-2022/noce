@@ -54,7 +54,28 @@ class ActivityLogController extends Controller
 
             $paginatedLogs = array_slice($filteredLogs, $start, $length);
 
-            $data = array_map(function ($log, $index) use ($start) {
+            // Get all admin IDs from logs to fetch names in batch
+            $adminIds = array_unique(array_filter(array_map(function ($log) {
+                return $log['performed_by_id'] ?? null;
+            }, $paginatedLogs)));
+
+            // Fetch admin names
+            $adminNames = [];
+            if (!empty($adminIds)) {
+                $admins = Admin::whereIn('id', $adminIds)->pluck('name', 'id')->toArray();
+                $adminNames = $admins;
+            }
+
+            $data = array_map(function ($log, $index) use ($start, $adminNames) {
+                $adminId = $log['performed_by_id'] ?? null;
+                $adminName = $adminNames[$adminId] ?? null;
+
+                // Add admin name to raw_data
+                $logWithName = $log;
+                if ($adminName) {
+                    $logWithName['performed_by_name'] = $adminName;
+                }
+
                 return [
                     'DT_RowIndex' => $start + $index + 1,
                     'timestamp' => $this->formatTimestamp($log['timestamp'] ?? ''),
@@ -62,7 +83,7 @@ class ActivityLogController extends Controller
                     'ip_address' => $log['performed_by_ip'] ?? 'غير محدد',
                     'action' => $log['action'] ?? 'غير محدد',
                     'details' => $log['metadata'] ?? [],
-                    'raw_data' => $log,
+                    'raw_data' => $logWithName,
                 ];
             }, $paginatedLogs, array_keys($paginatedLogs));
 

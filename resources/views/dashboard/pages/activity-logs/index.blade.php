@@ -600,13 +600,11 @@
 
             let html = '<div dir="rtl" style="font-family: inherit; font-size: 0.9rem;">';
 
-            const entries = Object.entries(logData).filter(([key, value]) =>
-                value !== null && value !== undefined && value !== ''
-            );
-
-            if (entries.length === 0) {
-                return 'لا توجد بيانات';
-            }
+            // Extract special fields
+            const action = logData.action ? formatActionName(logData.action) : '';
+            const adminName = logData.performed_by_name || logData.admin_name || '';
+            const adminEmail = logData.admin_email || logData.performed_by_email || '';
+            const ipAddress = logData.ip_address || logData.performed_by_ip || '';
 
             // Helper function to detect if text contains Arabic
             function containsArabic(text) {
@@ -614,15 +612,59 @@
                 return arabicRegex.test(text);
             }
 
+            // First row: Action
+            if (action) {
+                const hasArabic = containsArabic(action);
+                const fixedValue = hasArabic ? fixArabicDirection(action) : action;
+                html += '<div dir="rtl" style="margin-bottom: 12px; padding: 12px; background-color: #f8f9fa; border-radius: 4px; text-align: right;">';
+                if (hasArabic) {
+                    html += '<span dir="rtl" style="color: #333; font-size: 1rem; font-weight: 500; unicode-bidi: embed; direction: rtl; text-align: right; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
+                } else {
+                    html += '<span dir="ltr" style="color: #333; font-size: 1rem; font-weight: 500; unicode-bidi: embed; direction: ltr; text-align: left; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
+                }
+                html += '</div>';
+            }
+
+            // Second row: Name, Email, IP
+            const secondRowValues = [];
+            if (adminName) secondRowValues.push(escapeHtml(String(adminName)));
+            if (adminEmail) secondRowValues.push(escapeHtml(String(adminEmail)));
+            if (ipAddress) secondRowValues.push(escapeHtml(String(ipAddress)));
+
+            if (secondRowValues.length > 0) {
+                html += '<div dir="rtl" style="margin-bottom: 12px; padding: 12px; background-color: #f8f9fa; border-radius: 4px; text-align: right;">';
+                html += '<div style="display: flex; flex-direction: column; gap: 6px;">';
+                secondRowValues.forEach(value => {
+                    html += '<span dir="rtl" style="color: #666; font-size: 0.9rem; text-align: right;">' + value + '</span>';
+                });
+                html += '</div>';
+                html += '</div>';
+            }
+
+            // Handle other fields (metadata, etc.) without labels
+            const entries = Object.entries(logData).filter(([key, value]) => {
+                // Skip the special fields we already handled
+                if (key === 'action' ||
+                    key === 'admin_id' ||
+                    key === 'admin_email' ||
+                    key === 'ip_address' ||
+                    key === 'timestamp' ||
+                    key === 'performed_by_id' ||
+                    key === 'performed_by_name' ||
+                    key === 'performed_by_email' ||
+                    key === 'performed_by_ip' ||
+                    key === 'admin_name') {
+                    return false;
+                }
+                return value !== null && value !== undefined && value !== '';
+            });
+
             entries.forEach(([key, value]) => {
-                const keyLabel = formatKeyName(key);
                 let displayValue = value;
                 let isComplexValue = false;
-                let isArray = false;
 
                 // Handle different value types
                 if (Array.isArray(value)) {
-                    isArray = true;
                     if (value.length === 0) {
                         displayValue = 'فارغ';
                     } else if (typeof value[0] === 'object') {
@@ -640,28 +682,17 @@
                     displayValue = String(value);
                 }
 
-                // Format special fields
-                if (key === 'timestamp' && typeof value === 'string') {
-                    displayValue = formatTimestamp(value);
-                } else if (key === 'action' && typeof value === 'string') {
-                    displayValue = formatActionName(value);
-                }
-
                 const displayValueStr = String(displayValue);
                 const hasArabic = containsArabic(displayValueStr);
 
                 // Use different styling for complex values (JSON objects/arrays)
                 if (isComplexValue) {
                     html += '<div style="margin-bottom: 8px; padding: 8px; background-color: #f8f9fa; border-radius: 4px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">';
-                    html += '<div dir="rtl" style="margin-bottom: 4px; font-weight: bold; color: #333; text-align: right;">' + escapeHtml(keyLabel) + ':</div>';
                     html += '<div dir="ltr" style="direction: ltr; text-align: left; unicode-bidi: embed;">' + escapeHtml(displayValueStr) + '</div>';
                     html += '</div>';
                 } else {
-                    // For simple values, use RTL if contains Arabic, otherwise use appropriate direction
-                    const valueDir = hasArabic ? 'rtl' : 'ltr';
                     const fixedValue = hasArabic ? fixArabicDirection(displayValueStr) : displayValueStr;
                     html += '<div dir="rtl" style="margin-bottom: 8px; padding: 8px; background-color: #f8f9fa; border-radius: 4px; text-align: right;">';
-                    html += '<span style="font-weight: bold; color: #333; margin-left: 8px;">' + escapeHtml(keyLabel) + ':</span> ';
                     if (hasArabic) {
                         html += '<span dir="rtl" style="color: #666; unicode-bidi: embed; direction: rtl; text-align: right; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
                     } else {
