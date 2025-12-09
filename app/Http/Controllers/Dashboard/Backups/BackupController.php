@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Backup;
 use App\Traits\ApiResponse;
 use App\Traits\FileUploads;
+use App\Traits\AdminActivityLogger;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BackupController extends Controller
 {
-    use ApiResponse, FileUploads;
+    use ApiResponse, FileUploads, AdminActivityLogger;
 
     public function index(Request $request)
     {
@@ -120,6 +121,11 @@ class BackupController extends Controller
 
             // Delete the backup record from database
             $backupModel->delete();
+
+            $this->logActivity('backup_deleted', [
+                'backup_id' => $backupModel->id,
+                'backup_name' => $backupModel->name,
+            ]);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف النسخة الاحتياطية بنجاح');

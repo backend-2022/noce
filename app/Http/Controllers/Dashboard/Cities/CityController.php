@@ -8,6 +8,7 @@ use App\Http\Requests\Dashboard\City\UpdateCityRequest;
 use App\Models\City;
 use App\Repositories\Interfaces\CityRepositoryInterface;
 use App\Traits\ApiResponse;
+use App\Traits\AdminActivityLogger;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CityController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, AdminActivityLogger;
 
     protected CityRepositoryInterface $cityRepository;
 
@@ -89,8 +90,11 @@ class CityController extends Controller
             $data = $request->validated();
             $data['is_active'] = $request->has('is_active') ? true : false;
 
-            $this->cityRepository->create($data);
-
+            $city = $this->cityRepository->create($data);
+            $this->logActivity('city_created', [
+                'city_id' => $city->id,
+                'city_name' => $city->name,
+            ]);
             return redirect()->route('dashboard.cities.index')->with('success', 'تم إضافة المدينة بنجاح');
         } catch (Exception $e) {
             return redirect()->back()
@@ -116,7 +120,11 @@ class CityController extends Controller
             $data['is_active'] = $request->has('is_active') ? true : false;
 
             $this->cityRepository->update($city->id, $data);
-
+            $city->refresh();
+            $this->logActivity('city_updated', [
+                'city_id' => $city->id,
+                'city_name' => $city->name,
+            ]);
             return redirect()->route('dashboard.cities.index')->with('success', 'تم تحديث المدينة بنجاح');
         } catch (Exception $e) {
             return redirect()->back()
@@ -152,6 +160,11 @@ class CityController extends Controller
             // Delete the model
             $this->cityRepository->delete($cityModel->id);
 
+            $this->logActivity('city_deleted', [
+                'city_id' => $cityModel->id,
+                'city_name' => $cityModel->name,
+            ]);
+
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف المدينة بنجاح');
             }
@@ -176,7 +189,16 @@ class CityController extends Controller
     public function toggleStatus(City $city)
     {
         try {
+            $oldStatus = $city->is_active;
             $this->cityRepository->update($city->id, ['is_active' => ! $city->is_active]);
+            $city->refresh();
+
+            $this->logActivity('city_status_toggled', [
+                'city_id' => $city->id,
+                'city_name' => $city->name,
+                'old_status' => $oldStatus,
+                'new_status' => $city->is_active,
+            ]);
 
             $status = $city->is_active ? 'تم إلغاء تفعيل المدينة' : 'تم تفعيل المدينة';
 

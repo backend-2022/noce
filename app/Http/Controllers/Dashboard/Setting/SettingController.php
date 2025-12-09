@@ -9,6 +9,7 @@ use App\Http\Requests\Dashboard\Setting\UpdateSeoSettingRequest;
 use App\Repositories\Interfaces\SettingRepositoryInterface;
 use App\Models\Setting;
 use App\Traits\FileUploads;
+use App\Traits\AdminActivityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Http;
 
 class SettingController extends Controller
 {
-    use FileUploads;
+    use FileUploads, AdminActivityLogger;
 
     protected SettingRepositoryInterface $settingRepository;
 
@@ -178,6 +179,10 @@ class SettingController extends Controller
                 $settingsArray['home_banner_url'] = $this->getFileUrl($settingsArray['home_banner'], null, 'public');
             }
 
+            $this->logActivity('settings_updated', [
+                'updated_keys' => array_keys($settings),
+            ]);
+
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -226,6 +231,10 @@ class SettingController extends Controller
             foreach ($updatedSettings as $setting) {
                 $settingsArray[$setting->key] = $setting->value;
             }
+
+            $this->logActivity('social_media_settings_updated', [
+                'updated_keys' => array_keys($settings),
+            ]);
 
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
@@ -281,6 +290,10 @@ class SettingController extends Controller
             foreach ($updatedSettings as $setting) {
                 $settingsArray[$setting->key] = $setting->value;
             }
+
+            $this->logActivity('seo_settings_updated', [
+                'updated_keys' => array_keys($settings),
+            ]);
 
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([

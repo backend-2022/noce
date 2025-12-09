@@ -145,6 +145,20 @@
             if (typeof handleFormSubmission !== 'undefined') {
                 const submitButton = document.querySelector('#contactForm button[type="submit"]');
 
+                // Prevent scrolling to error fields for contact form
+                // Override scrollToErrorField if it exists (defined in ajax-handler.js)
+                if (typeof scrollToErrorField !== 'undefined') {
+                    const originalScrollToErrorField = scrollToErrorField;
+                    window.scrollToErrorField = function(field, form) {
+                        // Don't scroll if it's the contact form
+                        if (form && form.id === 'contactForm') {
+                            return; // Just return without scrolling
+                        }
+                        // Use original behavior for other forms
+                        return originalScrollToErrorField.call(this, field, form);
+                    };
+                }
+
                 // Store original button text for handleFormSubmission
                 if (submitButton && !submitButton.dataset.originalHtml) {
                     submitButton.dataset.originalHtml = submitButton.innerHTML;

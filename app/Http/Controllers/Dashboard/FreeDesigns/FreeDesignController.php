@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FreeDesign;
 use App\Repositories\Interfaces\FreeDesignRepositoryInterface;
 use App\Traits\ApiResponse;
+use App\Traits\AdminActivityLogger;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class FreeDesignController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, AdminActivityLogger;
 
     protected FreeDesignRepositoryInterface $freeDesignRepository;
 
@@ -99,6 +100,12 @@ class FreeDesignController extends Controller
 
             // Delete the model
             $this->freeDesignRepository->delete($freeDesignModel->id);
+
+            $this->logActivity('free_design_deleted', [
+                'free_design_id' => $freeDesignModel->id,
+                'free_design_name' => $freeDesignModel->name,
+                'free_design_email' => $freeDesignModel->email,
+            ]);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف طلب التصميم المجاني بنجاح');

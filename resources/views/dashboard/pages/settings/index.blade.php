@@ -41,6 +41,16 @@
                     </div>
                 </div>
 
+                <!-- Copyright Title -->
+                <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div class="div_input_label">
+                        <label class="label_style" for="copyright_title">عنوان حقوق الملكية</label>
+                        <input type="text" id="copyright_title" name="copyright_title" class="form-control"
+                            value="{{ old('copyright_title', $settings['copyright_title'] ?? '') }}"
+                            placeholder="العنوان الخاص بحقوق الملكية">
+                    </div>
+                </div>
+
                 <!-- Map Link -->
                 <div class="col-lg-12 col-md-12 col-sm-12 mt-3">
                     <div class="div_input_label">

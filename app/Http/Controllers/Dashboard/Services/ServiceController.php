@@ -8,6 +8,7 @@ use App\Http\Requests\Dashboard\Service\UpdateServiceRequest;
 use App\Models\Service;
 use App\Repositories\Interfaces\ServiceRepositoryInterface;
 use App\Traits\ApiResponse;
+use App\Traits\AdminActivityLogger;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ServiceController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, AdminActivityLogger;
 
     protected ServiceRepositoryInterface $serviceRepository;
 
@@ -90,8 +91,11 @@ class ServiceController extends Controller
             $data = $request->validated();
             $data['is_active'] = $request->has('is_active') ? true : false;
 
-            $this->serviceRepository->create($data);
-
+            $service = $this->serviceRepository->create($data);
+            $this->logActivity('service_created', [
+                'service_id' => $service->id,
+                'service_name' => $service->name,
+            ]);
             return redirect()->route('dashboard.services.index')->with('success', 'تم إضافة الخدمة بنجاح');
         } catch (Exception $e) {
             return redirect()->back()
@@ -117,7 +121,11 @@ class ServiceController extends Controller
             $data['is_active'] = $request->has('is_active') ? true : false;
 
             $this->serviceRepository->update($service->id, $data);
-
+            $service->refresh();
+            $this->logActivity('service_updated', [
+                'service_id' => $service->id,
+                'service_name' => $service->name,
+            ]);
             return redirect()->route('dashboard.services.index')->with('success', 'تم تحديث الخدمة بنجاح');
         } catch (Exception $e) {
             return redirect()->back()
@@ -153,6 +161,11 @@ class ServiceController extends Controller
             // Delete the model
             $this->serviceRepository->delete($serviceModel->id);
 
+            $this->logActivity('service_deleted', [
+                'service_id' => $serviceModel->id,
+                'service_name' => $serviceModel->name,
+            ]);
+
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف الخدمة بنجاح');
             }
@@ -177,7 +190,16 @@ class ServiceController extends Controller
     public function toggleStatus(Service $service)
     {
         try {
+            $oldStatus = $service->is_active;
             $this->serviceRepository->update($service->id, ['is_active' => ! $service->is_active]);
+            $service->refresh();
+
+            $this->logActivity('service_status_toggled', [
+                'service_id' => $service->id,
+                'service_name' => $service->name,
+                'old_status' => $oldStatus,
+                'new_status' => $service->is_active,
+            ]);
 
             $status = $service->is_active ? 'تم إلغاء تفعيل الخدمة' : 'تم تفعيل الخدمة';
 

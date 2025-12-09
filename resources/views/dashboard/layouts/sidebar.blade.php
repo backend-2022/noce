@@ -79,6 +79,16 @@
 
                     </li>
 
+                    <li class="sidebar-list {{ isActiveRouteGroup('dashboard.activity-logs.') }}">
+                        <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.activity-logs.') }}" href="{{ route('dashboard.activity-logs.index') }}">
+                            <div class="img_div">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
+                            </div>
+                            <span class="hide_span">سجل النشاطات</span>
+                        </a>
+
+                    </li>
+
                 </div>
 
 

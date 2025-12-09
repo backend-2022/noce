@@ -8,6 +8,7 @@ use App\Http\Requests\Dashboard\Admin\CreateAdminRequest;
 use App\Http\Requests\Dashboard\Admin\UpdateAdminRequest;
 use App\Traits\FileUploads;
 use App\Traits\ApiResponse;
+use App\Traits\AdminActivityLogger;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use Exception;
@@ -16,7 +17,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AdminController extends Controller
 {
-    use FileUploads, ApiResponse;
+    use FileUploads, ApiResponse, AdminActivityLogger;
 
     protected AdminRepositoryInterface $adminRepository;
 
@@ -126,7 +127,12 @@ class AdminController extends Controller
                 $data['image'] = $path;
             }
 
-            $this->adminRepository->create($data);
+            $admin = $this->adminRepository->create($data);
+            $this->logActivity('admin_created', [
+                'admin_id' => $admin->id,
+                'admin_name' => $admin->name,
+                'admin_email' => $admin->email,
+            ]);
             return redirect()->route('dashboard.admins.index')->with('success', 'تم إضافة المشرف بنجاح');
         } catch (Exception $e) {
             return redirect()->back()
@@ -171,6 +177,12 @@ class AdminController extends Controller
             }
 
             $this->adminRepository->update($admin->id, $data);
+            $admin->refresh();
+            $this->logActivity('admin_updated', [
+                'admin_id' => $admin->id,
+                'admin_name' => $admin->name,
+                'admin_email' => $admin->email,
+            ]);
             return redirect()->route('dashboard.admins.index')->with('success', 'تم تحديث المشرف بنجاح');
         } catch (Exception $e) {
             return redirect()->back()
@@ -219,6 +231,12 @@ class AdminController extends Controller
 
             // Delete the model
             $this->adminRepository->delete($adminModel->id);
+
+            $this->logActivity('admin_deleted', [
+                'admin_id' => $adminModel->id,
+                'admin_name' => $adminModel->name,
+                'admin_email' => $adminModel->email,
+            ]);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return $this->deletedResponse('تم حذف المشرف بنجاح');
@@ -278,13 +296,24 @@ class AdminController extends Controller
                 : redirect()->route('dashboard.admins.index')->with('error', 'لم يتم العثور على المشرفين المحددين');
         }
 
+        $deletedAdmins = [];
         foreach ($admins as $admin) {
             if ($admin->image) {
                 $this->deleteFile($admin->image, null, 'public');
             }
 
+            $deletedAdmins[] = [
+                'id' => $admin->id,
+                'name' => $admin->name,
+                'email' => $admin->email,
+            ];
             $this->adminRepository->delete($admin->id);
         }
+
+        $this->logActivity('admin_bulk_deleted', [
+            'count' => count($deletedAdmins),
+            'admins' => $deletedAdmins,
+        ]);
 
         $message = 'تم حذف ' . $admins->count() . ' من المشرفين بنجاح';
 
@@ -304,7 +333,16 @@ class AdminController extends Controller
                     ->with('error', 'لا يمكنك تعطيل حسابك الخاص');
             }
 
+            $oldStatus = $admin->is_active;
             $this->adminRepository->update($admin->id, ['is_active' => !$admin->is_active]);
+            $admin->refresh();
+
+            $this->logActivity('admin_status_toggled', [
+                'admin_id' => $admin->id,
+                'admin_name' => $admin->name,
+                'old_status' => $oldStatus,
+                'new_status' => $admin->is_active,
+            ]);
 
             $status = $admin->is_active ? 'تم إلغاء تفعيل المشرف' : 'تم تفعيل المشرف';
             return redirect()->route('dashboard.admins.index')->with('success', $status);

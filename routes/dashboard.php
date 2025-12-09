@@ -9,6 +9,7 @@ use App\Http\Controllers\Dashboard\Cities\CityController;
 use App\Http\Controllers\Dashboard\Services\ServiceController;
 use App\Http\Controllers\Dashboard\FreeDesigns\FreeDesignController;
 use App\Http\Controllers\Dashboard\Backups\BackupController;
+use App\Http\Controllers\Dashboard\ActivityLogs\ActivityLogController;
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     // Phone Codes Route (public - no authentication required)
     Route::get('/phone-codes', function () {
@@ -77,6 +78,9 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
         Route::get('backups/{backup}/download', [BackupController::class, 'download'])->name('backups.download');
         Route::delete('backups/{backup}', [BackupController::class, 'destroy'])->name('backups.destroy');
+
+        // Activity Logs Routes
+        Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 
     });
 });

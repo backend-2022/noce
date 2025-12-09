@@ -68,7 +68,7 @@
           </div>
 
           <div class="footer-bottom">
-              <p>&copy; 2025 جميع الحقوق محفوظة - شركة ( {{ setting('site_name') ?? 'NOCE - نوتش' }} ) للتصاميم الداخلية</p>
-          </div>
+              <p>&copy; 2025 جميع الحقوق محفوظة - {{ setting('copyright_title') }}</p>
+            </div>
       </div>
   </footer>

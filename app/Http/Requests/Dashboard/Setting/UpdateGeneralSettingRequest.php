@@ -21,6 +21,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'site_name' => InputEnum::TITLE->getValidationRules(),
             'promotional_title' => InputEnum::TITLE->getValidationRules(),
             'description' => InputEnum::DESCRIPTION->getValidationRules(),
+            'copyright_title' => InputEnum::TITLE->getValidationRules(),
             'map_link' => 'nullable|string|max:10000', // Accept string to allow iframe code or URL
             'keep_backups' => 'nullable|in:1',
             'logo' => 'nullable|' . IconMimesValidationEnum::validationRule(),
@@ -50,6 +51,11 @@ class UpdateGeneralSettingRequest extends FormRequest
             'description.max' => 'نبذة عن الموقع يجب أن لا يتجاوز 1000 حرف',
             'description.min' => 'نبذة عن الموقع يجب أن يكون على الأقل 3 أحرف',
 
+            'copyright_title.required' => 'عنوان حقوق الملكية مطلوب',
+            'copyright_title.string' => 'عنوان حقوق الملكية يجب أن يكون نص',
+            'copyright_title.max' => 'عنوان حقوق الملكية يجب أن لا يتجاوز 255 حرف',
+            'copyright_title.min' => 'عنوان حقوق الملكية يجب أن يكون على الأقل 3 أحرف',
+
             'map_link.string' => 'رابط الخريطة يجب أن يكون نص',
             'map_link.max' => 'رابط الخريطة يجب أن لا يتجاوز 10000 حرف',
         ], $logoMessages, $homeBannerMessages);
@@ -62,6 +68,7 @@ class UpdateGeneralSettingRequest extends FormRequest
             'site_name' => 'اسم الموقع',
             'promotional_title' => 'العنوان الترويجي',
             'description' => 'نبذة عن الموقع',
+            'copyright_title' => 'عنوان حقوق الملكية',
             'map_link' => 'رابط الخريطة',
             'logo' => 'الشعار',
             'home_banner' => 'صورة البانر الرئيسية',
