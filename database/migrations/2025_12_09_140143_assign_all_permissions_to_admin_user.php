@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
@@ -53,17 +54,25 @@ return new class extends Migration
         // Find the admin with email admin@noce.com
         $admin = Admin::where('email', 'admin@noce.com')->first();
 
-        if ($admin) {
-            // Get all permissions for the admin guard
-            $allPermissions = Permission::where('guard_name', 'admin')->pluck('name')->toArray();
+        if (!$admin) {
+            // If admin doesn't exist, create it
+            $admin = Admin::create([
+                'name' => 'Super Admin',
+                'email' => 'admin@noce.com',
+                'password' => Hash::make('123456789'),
+                'is_active' => true,
+            ]);
+        }
 
-            if (!empty($allPermissions)) {
-                // Assign all permissions to the admin
-                $admin->syncPermissions($allPermissions);
+        // Get all permissions for the admin guard
+        $allPermissions = Permission::where('guard_name', 'admin')->pluck('name')->toArray();
 
-                // Clear cache again after assigning permissions
-                app()[PermissionRegistrar::class]->forgetCachedPermissions();
-            }
+        if (!empty($allPermissions)) {
+            // Assign all permissions to the admin (whether it existed or was just created)
+            $admin->syncPermissions($allPermissions);
+
+            // Clear cache again after assigning permissions
+            app()[PermissionRegistrar::class]->forgetCachedPermissions();
         }
     }
 
