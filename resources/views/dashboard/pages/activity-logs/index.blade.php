@@ -390,9 +390,7 @@
                         if (itemEmail) {
                             itemText += ` (${escapeHtml(itemEmail)})`;
                         }
-                        if (itemId) {
-                            itemText += ` [ID: ${itemId}]`;
-                        }
+                        // Hide ID from display
 
                         html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
                             <span class="text-gray-700 flex-grow-1" style="word-break: break-word; font-size: 0.85rem;">${itemText}</span>
@@ -408,8 +406,8 @@
 
             // Filter out id fields and handle status updates specially
             const entries = Object.entries(data).filter(([key, value]) => {
-                // Skip id fields (like admin_id, city_id, service_id, etc.)
-                if (key.endsWith('_id') && key !== 'id') {
+                // Skip all id fields (like admin_id, city_id, service_id, id, target_admin_id, etc.)
+                if (key.endsWith('_id') || key === 'id') {
                     return false;
                 }
                 // Skip old_status and new_status if both exist (we'll show a combined message)
