@@ -48,11 +48,6 @@ class ActivityLogController extends Controller
 
             $filteredLogs = $this->applyFilters($logs, $request);
 
-            $searchValue = $request->input('search.value');
-            if ($searchValue) {
-                $filteredLogs = $this->applySearch($filteredLogs, $searchValue);
-            }
-
             $start = (int) $request->input('start', 0);
             $length = (int) $request->input('length', 10);
             $totalRecords = count($filteredLogs);
@@ -172,8 +167,9 @@ class ActivityLogController extends Controller
         $toDate = $request->input('to_date');
         $adminId = $request->input('admin_id');
         $module = $request->input('module');
+        $action = $request->input('action');
 
-        return array_filter($logs, function ($log) use ($fromDate, $toDate, $adminId, $module) {
+        return array_filter($logs, function ($log) use ($fromDate, $toDate, $adminId, $module, $action) {
             // Date range filter
             if ($fromDate || $toDate) {
                 $logTimestamp = $log['timestamp'] ?? '';
@@ -215,13 +211,20 @@ class ActivityLogController extends Controller
 
             // Module filter
             if ($module && isset($log['action'])) {
-                $action = strtolower($log['action']);
+                $logAction = strtolower($log['action']);
                 $moduleLower = strtolower($module);
 
-                $actionParts = explode('_', $action);
+                $actionParts = explode('_', $logAction);
                 $actionPrefix = $actionParts[0] ?? '';
 
-                if ($actionPrefix !== $moduleLower && strpos($action, $moduleLower) === false) {
+                if ($actionPrefix !== $moduleLower && strpos($logAction, $moduleLower) === false) {
+                    return false;
+                }
+            }
+
+            // Action filter
+            if ($action && isset($log['action'])) {
+                if (strtolower($log['action']) !== strtolower($action)) {
                     return false;
                 }
             }

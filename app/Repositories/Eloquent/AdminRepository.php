@@ -5,7 +5,6 @@ namespace App\Repositories\Eloquent;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
 use App\Models\Admin;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Hash;
 
 class AdminRepository implements AdminRepositoryInterface
 {
@@ -33,18 +32,22 @@ class AdminRepository implements AdminRepositoryInterface
 
     public function create(array $data): Admin
     {
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
+        // Don't hash password here - let the model's 'hashed' cast handle it
+        // The 'hashed' cast in the Admin model will automatically hash the password
         return $this->model->create($data);
     }
 
     public function update(int $id, array $data): bool
     {
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
+        $admin = $this->model->find($id);
+        if (!$admin) {
+            return false;
         }
-        return $this->model->where('id', $id)->update($data);
+
+        // Don't hash password here - let the model's 'hashed' cast handle it
+        // The 'hashed' cast in the Admin model will automatically hash the password
+        $admin->fill($data);
+        return $admin->save();
     }
 
     public function delete(int $id): bool
@@ -63,8 +66,13 @@ class AdminRepository implements AdminRepositoryInterface
 
     public function updatePassword(int $id, string $password): bool
     {
-        return $this->model->where('id', $id)->update([
-            'password' => Hash::make($password)
-        ]);
+        $admin = $this->model->find($id);
+        if (!$admin) {
+            return false;
+        }
+
+        // Don't hash password here - let the model's 'hashed' cast handle it
+        $admin->password = $password;
+        return $admin->save();
     }
 }

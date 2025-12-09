@@ -1,7 +1,6 @@
 @extends('dashboard.layouts.app')
 
 @section('pageTitle', 'سجل النشاطات')
-
 @section('content')
 
     <div class="inner-body">
@@ -14,6 +13,28 @@
                         @foreach($admins as $admin)
                             <option value="{{ $admin->id }}">{{ $admin->name }} ({{ $admin->email }})</option>
                         @endforeach
+                    </select>
+                    <select class="form-select form-select-solid w-200px" id="action_filter" style="max-width: 200px;">
+                        <option value="">جميع الإجراءات</option>
+                        <option value="admin_created">إنشاء مشرف</option>
+                        <option value="admin_updated">تحديث مشرف</option>
+                        <option value="admin_deleted">حذف مشرف</option>
+                        <option value="admin_bulk_deleted">حذف جماعي للمشرفين</option>
+                        <option value="admin_status_toggled">تغيير حالة المشرف</option>
+                        <option value="admin_permissions_updated">تحديث صلاحية مشرف</option>
+                        <option value="city_created">إنشاء مدينة</option>
+                        <option value="city_updated">تحديث مدينة</option>
+                        <option value="city_deleted">حذف مدينة</option>
+                        <option value="city_status_toggled">تغيير حالة المدينة</option>
+                        <option value="service_created">إنشاء خدمة</option>
+                        <option value="service_updated">تحديث خدمة</option>
+                        <option value="service_deleted">حذف خدمة</option>
+                        <option value="service_status_toggled">تغيير حالة الخدمة</option>
+                        <option value="free_design_deleted">حذف تصميم مجاني</option>
+                        <option value="backup_deleted">حذف نسخة احتياطية</option>
+                        <option value="settings_updated">تحديث الإعدادات</option>
+                        <option value="social_media_settings_updated">تحديث إعدادات التواصل الاجتماعي</option>
+                        <option value="seo_settings_updated">تحديث إعدادات SEO</option>
                     </select>
                 </div>
 
@@ -32,6 +53,21 @@
                         </thead>
                         <tbody></tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Details Modal -->
+    <div class="modal fade" id="logDetailsModal" tabindex="-1" aria-labelledby="logDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" dir="rtl">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logDetailsModalLabel">تفاصيل السجل</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="logDetailsContent" dir="rtl">
+                    <!-- Content will be populated by JavaScript -->
                 </div>
             </div>
         </div>
@@ -215,9 +251,9 @@
                 'admin_id': 'معرف المشرف',
                 'admin_name': 'اسم المشرف',
                 'admin_email': 'بريد المشرف',
-                'target_admin_id': 'معرف المشرف المستهدف',
-                'target_admin_name': 'اسم المشرف المستهدف',
-                'target_admin_email': 'بريد المشرف المستهدف',
+                'target_admin_id': 'معرف المشرف ا ',
+                'target_admin_name': 'اسم المشرف ا ',
+                'target_admin_email': 'بريد المشرف ا ',
 
                 // City related
                 'city_id': 'معرف المدينة',
@@ -466,7 +502,6 @@
                         let permissionsHtml = '<div class="d-flex flex-wrap gap-1">';
                         value.forEach((permission) => {
                             const translatedPermission = formatPermissionName(permission);
-                            permissionsHtml += `<span class="badge bg-info text-white" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; white-space: nowrap;">${escapeHtml(translatedPermission)}</span>`;
                         });
                         permissionsHtml += '</div>';
                         displayValue = permissionsHtml;
@@ -518,6 +553,128 @@
             return div.innerHTML;
         }
 
+        // Function to fix Arabic text direction using Unicode Bidirectional Isolation
+        function fixArabicDirection(text) {
+            if (!text || typeof text !== 'string') {
+                return text;
+            }
+
+            // Check if text contains Arabic characters
+            const arabicRegex = /[\u0600-\u06FF]/;
+            if (!arabicRegex.test(text)) {
+                return text;
+            }
+
+            const RLE = '\u202B'; // Right-to-Left Embedding
+            const PDF = '\u202C'; // Pop Directional Formatting
+
+            return RLE + text + PDF;
+        }
+
+        function formatTimestamp(timestamp) {
+            try {
+                if (!timestamp) {
+                    return 'غير محدد';
+                }
+                const date = new Date(timestamp);
+                if (isNaN(date.getTime())) {
+                    return timestamp;
+                }
+                // Format as DD-MM-YYYY HH:mm
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes} ${day}-${month}-${year}`;
+            } catch (e) {
+                console.error('Error formatting timestamp:', e);
+                return timestamp;
+            }
+        }
+
+        function renderLogObjectDetails(logData) {
+            if (!logData || typeof logData !== 'object') {
+                return 'لا توجد بيانات';
+            }
+
+            let html = '<div dir="rtl" style="font-family: inherit; font-size: 0.9rem;">';
+
+            const entries = Object.entries(logData).filter(([key, value]) =>
+                value !== null && value !== undefined && value !== ''
+            );
+
+            if (entries.length === 0) {
+                return 'لا توجد بيانات';
+            }
+
+            // Helper function to detect if text contains Arabic
+            function containsArabic(text) {
+                const arabicRegex = /[\u0600-\u06FF]/;
+                return arabicRegex.test(text);
+            }
+
+            entries.forEach(([key, value]) => {
+                const keyLabel = formatKeyName(key);
+                let displayValue = value;
+                let isComplexValue = false;
+                let isArray = false;
+
+                // Handle different value types
+                if (Array.isArray(value)) {
+                    isArray = true;
+                    if (value.length === 0) {
+                        displayValue = 'فارغ';
+                    } else if (typeof value[0] === 'object') {
+                        displayValue = JSON.stringify(value, null, 2);
+                        isComplexValue = true;
+                    } else {
+                        displayValue = value.join(', ');
+                    }
+                } else if (typeof value === 'object') {
+                    displayValue = JSON.stringify(value, null, 2);
+                    isComplexValue = true;
+                } else if (typeof value === 'boolean') {
+                    displayValue = value ? 'نعم' : 'لا';
+                } else {
+                    displayValue = String(value);
+                }
+
+                // Format special fields
+                if (key === 'timestamp' && typeof value === 'string') {
+                    displayValue = formatTimestamp(value);
+                } else if (key === 'action' && typeof value === 'string') {
+                    displayValue = formatActionName(value);
+                }
+
+                const displayValueStr = String(displayValue);
+                const hasArabic = containsArabic(displayValueStr);
+
+                // Use different styling for complex values (JSON objects/arrays)
+                if (isComplexValue) {
+                    html += '<div style="margin-bottom: 8px; padding: 8px; background-color: #f8f9fa; border-radius: 4px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">';
+                    html += '<div dir="rtl" style="margin-bottom: 4px; font-weight: bold; color: #333; text-align: right;">' + escapeHtml(keyLabel) + ':</div>';
+                    html += '<div dir="ltr" style="direction: ltr; text-align: left; unicode-bidi: embed;">' + escapeHtml(displayValueStr) + '</div>';
+                    html += '</div>';
+                } else {
+                    // For simple values, use RTL if contains Arabic, otherwise use appropriate direction
+                    const valueDir = hasArabic ? 'rtl' : 'ltr';
+                    const fixedValue = hasArabic ? fixArabicDirection(displayValueStr) : displayValueStr;
+                    html += '<div dir="rtl" style="margin-bottom: 8px; padding: 8px; background-color: #f8f9fa; border-radius: 4px; text-align: right;">';
+                    html += '<span style="font-weight: bold; color: #333; margin-left: 8px;">' + escapeHtml(keyLabel) + ':</span> ';
+                    if (hasArabic) {
+                        html += '<span dir="rtl" style="color: #666; unicode-bidi: embed; direction: rtl; text-align: right; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
+                    } else {
+                        html += '<span dir="ltr" style="color: #666; unicode-bidi: embed; direction: ltr; text-align: left; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
+                    }
+                    html += '</div>';
+                }
+            });
+
+            html += '</div>';
+            return html;
+        }
+
         $(document).ready(function() {
             var $tableElement = $('#activity-logs-table');
             var dataUrl = $tableElement.data('url');
@@ -530,6 +687,7 @@
                     data: function(d) {
                         // Add custom filters
                         d.admin_id = $('#admin_filter').val() || '';
+                        d.action = $('#action_filter').val() || '';
                     },
                     dataSrc: function(json) {
                         if (json.error) {
@@ -583,12 +741,34 @@
                         searchable: true,
                         render: function(data, type, row) {
                             if (type === 'display') {
-                                return renderActivityDetails(data, type, row);
+                                let detailsHtml = renderActivityDetails(data, type, row);
+
+                                // Add eye icon button
+                                try {
+                                    const rawData = row.raw_data || row || {};
+                                    const jsonString = JSON.stringify(rawData);
+                                    const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+                                    const buttonHtml = '<div class="mt-2"><button type="button" class="btn btn-sm btn-primary view-log-btn" data-log-encoded="' + encodedData + '" title="عرض التفاصيل الكاملة" style="min-width: 40px; padding: 0.25rem 0.5rem;"><i class="fa fa-eye"></i></button></div>';
+                                    return detailsHtml + buttonHtml;
+                                } catch (e) {
+                                    console.error('Error rendering view button:', e, row);
+                                    return detailsHtml;
+                                }
                             }
                             return JSON.stringify(data);
                         }
                     }
-                ]
+                ],
+                [],
+                null,
+                10,
+                {
+                    dom: '<"row marg_row">' +
+                         '<"row table-design"<"col-12  table-design-inner"tr>>' +
+                         '<"row"<"col-sm-12 d-flex my-3 justify-content-center text-end"p>>' +
+                         '<"row"<"col-12 d-flex justify-content-center"i>>',
+                    searching: false
+                }
             );
 
             window.activityLogsTable = table;
@@ -596,6 +776,27 @@
             // Filter change handlers
             $('#admin_filter').on('change', function() {
                 table.ajax.reload(null, false);
+            });
+
+            $('#action_filter').on('change', function() {
+                table.ajax.reload(null, false);
+            });
+
+            // Handle view log details button click
+            $(document).on('click', '.view-log-btn', function() {
+                try {
+                    const encodedData = $(this).attr('data-log-encoded');
+                    // Decode Unicode-safe base64
+                    const jsonString = decodeURIComponent(escape(atob(encodedData)));
+                    const logData = JSON.parse(jsonString);
+                    const modalContent = renderLogObjectDetails(logData);
+
+                    $('#logDetailsContent').html(modalContent);
+                    $('#logDetailsModal').modal('show');
+                } catch (e) {
+                    console.error('Error parsing log data:', e);
+                    toastr.error('حدث خطأ في تحميل تفاصيل السجل');
+                }
             });
         });
     </script>

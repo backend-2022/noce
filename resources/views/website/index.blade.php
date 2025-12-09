@@ -24,7 +24,7 @@
                     </div>
                     <div class="form-group">
                         <label> رقم الجوال <span class="required">*</span></label>
-                        <input type="tel" name="phone" placeholder=" 05*********">
+                        <input type="tel" name="phone" placeholder="5*********">
                     </div>
                     <div class="form-group">
                         <label>اختر المدينه <span class="required">*</span></label>
