@@ -495,6 +495,11 @@
                     html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
                         <div class="${valueClass} flex-grow-1 fw-semibold" style="word-break: break-word; font-size: 0.85rem;">${displayValue}</div>
                     </div>`;
+                } else if (isPermissionsArray) {
+                    // For permissions array, displayValue already contains HTML (badges)
+                    html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
+                        <div class="${valueClass} flex-grow-1" style="word-break: break-word;">${displayValue}</div>
+                    </div>`;
                 } else {
                     html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
                         <span class="${valueClass} flex-grow-1 fw-semibold" style="word-break: break-word; font-size: 0.85rem;">${escapeHtml(String(displayValue))}</span>
