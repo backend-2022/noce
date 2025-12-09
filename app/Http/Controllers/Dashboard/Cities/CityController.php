@@ -46,13 +46,6 @@ class CityController extends Controller
                 ->addColumn('name', fn (City $city) => '<span class="span_styles">' . e($city->name) . '</span>')
                 ->addColumn('created_at', fn (City $city) => '<span class="span_styles">' . optional($city->created_at)->format('Y-m-d H:i') . '</span>')
                 ->addColumn('status', function (City $city) {
-                    $user = auth('admin')->user();
-
-                    // Only show toggle if user has update permission
-                    if (!$user->can('cities.update')) {
-                        return '<span class="span_styles">' . ($city->is_active ? 'مفعل' : 'غير مفعل') . '</span>';
-                    }
-
                     $inputId = 'flexSwitchCheckChecked' . $city->id;
 
                     $form = '<form method="POST" action="' . e(route('dashboard.cities.toggle-status', $city)) . '" style="display:inline;">'
@@ -66,22 +59,17 @@ class CityController extends Controller
                     return $form;
                 })
                 ->addColumn('actions', function (City $city) {
-                    $user = auth('admin')->user();
                     $buttons = '<div class="btns-table">';
 
-                    if ($user->can('cities.update')) {
-                        $buttons .= '<a href="' . e(route('dashboard.cities.edit', $city)) . '" class="btn_styles amendment">
-                                        <i class="fa fa-edit"></i>
-                                        تعديل
-                                    </a>';
-                    }
+                    $buttons .= '<a href="' . e(route('dashboard.cities.edit', $city)) . '" class="btn_styles amendment">
+                                    <i class="fa fa-edit"></i>
+                                    تعديل
+                                </a>';
 
-                    if ($user->can('cities.delete')) {
-                        $buttons .= '<a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.cities.destroy', $city)) . '" data-city-name="' . e($city->name) . '">
-                                        <i class="fa fa-trash"></i>
-                                        حذف
-                                    </a>';
-                    }
+                    $buttons .= '<a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.cities.destroy', $city)) . '" data-city-name="' . e($city->name) . '">
+                                    <i class="fa fa-trash"></i>
+                                    حذف
+                                </a>';
 
                     $buttons .= '</div>';
 

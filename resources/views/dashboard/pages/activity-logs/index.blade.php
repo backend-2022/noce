@@ -66,6 +66,7 @@
                 'admin_deleted': 'حذف مشرف',
                 'admin_bulk_deleted': 'حذف جماعي للمشرفين',
                 'admin_status_toggled': 'تغيير حالة المشرف',
+                'admin_permissions_updated': 'تحديث صلاحية مشرف',
                 'city_created': 'إنشاء مدينة',
                 'city_updated': 'تحديث مدينة',
                 'city_deleted': 'حذف مدينة',
@@ -127,12 +128,96 @@
             return arabicParts.join(' ');
         }
 
+        function formatPermissionName(permissionKey) {
+            const permissionTranslations = {
+                // Activity Logs
+                'activity-logs.view': 'عرض سجل النشاطات',
+                'activity-logs.create': 'إنشاء سجل النشاطات',
+                'activity-logs.update': 'تحديث سجل النشاطات',
+                'activity-logs.delete': 'حذف سجل النشاطات',
+                // Cities
+                'cities.view': 'عرض المدن',
+                'cities.create': 'إنشاء المدن',
+                'cities.update': 'تحديث المدن',
+                'cities.delete': 'حذف المدن',
+                // Services
+                'services.view': 'عرض الخدمات',
+                'services.create': 'إنشاء الخدمات',
+                'services.update': 'تحديث الخدمات',
+                'services.delete': 'حذف الخدمات',
+                // Free Services
+                'free-services.view': 'عرض الخدمات المجانية',
+                'free-services.create': 'إنشاء الخدمات المجانية',
+                'free-services.update': 'تحديث الخدمات المجانية',
+                'free-services.delete': 'حذف الخدمات المجانية',
+                // Admins
+                'admins.view': 'عرض المشرفين',
+                'admins.create': 'إنشاء المشرفين',
+                'admins.update': 'تحديث المشرفين',
+                'admins.delete': 'حذف المشرفين',
+                // Backup
+                'backup.view': 'عرض النسخ الاحتياطية',
+                'backup.create': 'إنشاء النسخ الاحتياطية',
+                'backup.update': 'تحديث النسخ الاحتياطية',
+                'backup.delete': 'حذف النسخ الاحتياطية',
+                // Settings
+                'settings.view': 'عرض الإعدادات',
+                'settings.create': 'إنشاء الإعدادات',
+                'settings.update': 'تحديث الإعدادات',
+                'settings.delete': 'حذف الإعدادات',
+                // Permissions
+                'permissions.view': 'عرض الصلاحيات',
+                'permissions.create': 'إنشاء الصلاحيات',
+                'permissions.update': 'تحديث الصلاحيات',
+                'permissions.delete': 'حذف الصلاحيات',
+            };
+
+            if (permissionTranslations[permissionKey]) {
+                return permissionTranslations[permissionKey];
+            }
+
+            // Fallback: try to translate module and action separately
+            const parts = permissionKey.split('.');
+            if (parts.length === 2) {
+                const module = parts[0];
+                const action = parts[1];
+
+                const moduleTranslations = {
+                    'activity-logs': 'سجل النشاطات',
+                    'cities': 'المدن',
+                    'services': 'الخدمات',
+                    'free-services': 'الخدمات المجانية',
+                    'admins': 'المشرفين',
+                    'backup': 'النسخ الاحتياطية',
+                    'settings': 'الإعدادات',
+                    'permissions': 'الصلاحيات',
+                };
+
+                const actionTranslations = {
+                    'view': 'عرض',
+                    'create': 'إنشاء',
+                    'update': 'تحديث',
+                    'delete': 'حذف',
+                };
+
+                const translatedModule = moduleTranslations[module] || module;
+                const translatedAction = actionTranslations[action] || action;
+
+                return translatedAction + ' ' + translatedModule;
+            }
+
+            return permissionKey;
+        }
+
         function formatKeyName(key) {
             const translations = {
                 // Admin related
                 'admin_id': 'معرف المشرف',
                 'admin_name': 'اسم المشرف',
                 'admin_email': 'بريد المشرف',
+                'target_admin_id': 'معرف المشرف المستهدف',
+                'target_admin_name': 'اسم المشرف المستهدف',
+                'target_admin_email': 'بريد المشرف المستهدف',
 
                 // City related
                 'city_id': 'معرف المدينة',
@@ -177,6 +262,10 @@
                 'phone': 'الهاتف',
                 'email': 'البريد الإلكتروني',
                 'address': 'العنوان',
+
+                // Permissions related
+                'permissions': 'الصلاحيات',
+                'permissions_count': 'عدد الصلاحيات',
 
                 // General
                 'count': 'العدد',
@@ -263,16 +352,70 @@
                 return '<span class="text-gray-700">' + escapeHtml(String(data || '-')) + '</span>';
             }
 
+            // Check if this is a bulk deletion action
+            const action = row?.action || row?.raw_data?.action || '';
+            const isBulkDelete = action.includes('bulk_deleted');
+
+            // Handle bulk deletion specially
+            if (isBulkDelete && data.count !== undefined) {
+                // Find the array of deleted items (could be 'admins', 'cities', 'services', etc.)
+                let deletedItems = null;
+                let itemsKey = null;
+
+                // Check common keys for bulk deletion arrays
+                const possibleKeys = ['admins', 'cities', 'services', 'items', 'deleted_items'];
+                for (const key of possibleKeys) {
+                    if (Array.isArray(data[key]) && data[key].length > 0) {
+                        deletedItems = data[key];
+                        itemsKey = key;
+                        break;
+                    }
+                }
+
+                let html = '<div class="d-flex flex-column gap-2" style="max-width: 500px;">';
+
+                // Show count
+                html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
+                    <span class="text-gray-700 fw-semibold" style="word-break: break-word; font-size: 0.85rem;">عدد العناصر المحذوفة: ${data.count}</span>
+                </div>`;
+
+                // Show list of deleted items
+                if (deletedItems && deletedItems.length > 0) {
+                    deletedItems.forEach((item, index) => {
+                        const itemName = item.name || item.city_name || item.service_name || item.title || 'غير محدد';
+                        const itemEmail = item.email || '';
+                        const itemId = item.id || '';
+
+                        let itemText = `${index + 1}. ${escapeHtml(itemName)}`;
+                        if (itemEmail) {
+                            itemText += ` (${escapeHtml(itemEmail)})`;
+                        }
+                        // Hide ID from display
+
+                        html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
+                            <span class="text-gray-700 flex-grow-1" style="word-break: break-word; font-size: 0.85rem;">${itemText}</span>
+                        </div>`;
+                    });
+                }
+
+                html += '</div>';
+                return html;
+            }
+
             let html = '<div class="d-flex flex-column gap-2" style="max-width: 500px;">';
 
             // Filter out id fields and handle status updates specially
             const entries = Object.entries(data).filter(([key, value]) => {
-                // Skip id fields (like admin_id, city_id, service_id, etc.)
-                if (key.endsWith('_id') && key !== 'id') {
+                // Skip all id fields (like admin_id, city_id, service_id, id, target_admin_id, etc.)
+                if (key.endsWith('_id') || key === 'id') {
                     return false;
                 }
                 // Skip old_status and new_status if both exist (we'll show a combined message)
                 if (key === 'old_status' || key === 'new_status') {
+                    return false;
+                }
+                // Skip bulk deletion specific fields (handled above)
+                if (isBulkDelete && (key === 'count' || key === 'admins' || key === 'cities' || key === 'services' || key === 'items' || key === 'deleted_items')) {
                     return false;
                 }
                 return value !== null && value !== undefined && value !== '';
@@ -295,10 +438,43 @@
             for (const [key, value] of entries) {
                 let displayValue = value;
                 let valueClass = 'text-gray-700';
+                let isArrayOfObjects = false;
+
+                // Check if this is a permissions array
+                const isPermissionsArray = key === 'permissions' && Array.isArray(value) && value.length > 0 && typeof value[0] === 'string';
 
                 if (Array.isArray(value)) {
-                    displayValue = value.length > 0 ? value.join(', ') : 'فارغ';
-                    valueClass = 'text-info';
+                    // Check if array contains objects (like in bulk operations)
+                    if (value.length > 0 && typeof value[0] === 'object') {
+                        isArrayOfObjects = true;
+                        // Build HTML structure for array of objects
+                        let arrayHtml = '<div class="d-flex flex-column gap-1">';
+                        value.forEach((item, idx) => {
+                            if (item.name || item.city_name || item.service_name) {
+                                const name = item.name || item.city_name || item.service_name;
+                                const email = item.email ? ` (${escapeHtml(item.email)})` : '';
+                                arrayHtml += `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(name)}${email}</div>`;
+                            } else {
+                                arrayHtml += `<div class="text-info" style="font-size: 0.85rem;">${idx + 1}. ${escapeHtml(JSON.stringify(item))}</div>`;
+                            }
+                        });
+                        arrayHtml += '</div>';
+                        displayValue = arrayHtml;
+                        valueClass = 'text-info';
+                    } else if (isPermissionsArray) {
+                        // Handle permissions array - translate each permission key and display as badges
+                        let permissionsHtml = '<div class="d-flex flex-wrap gap-1">';
+                        value.forEach((permission) => {
+                            const translatedPermission = formatPermissionName(permission);
+                            permissionsHtml += `<span class="badge bg-info text-white" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; white-space: nowrap;">${escapeHtml(translatedPermission)}</span>`;
+                        });
+                        permissionsHtml += '</div>';
+                        displayValue = permissionsHtml;
+                        valueClass = 'text-info';
+                    } else {
+                        displayValue = value.length > 0 ? value.join(', ') : 'فارغ';
+                        valueClass = 'text-info';
+                    }
                 } else if (typeof value === 'object') {
                     displayValue = JSON.stringify(value, null, 2);
                     valueClass = 'text-gray-600';
@@ -312,9 +488,21 @@
 
                 const cleanKey = formatKeyName(key);
 
-                html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
-                    <span class="${valueClass} flex-grow-1 fw-semibold" style="word-break: break-word; font-size: 0.85rem;">${escapeHtml(String(displayValue))}</span>
-                </div>`;
+                if (isArrayOfObjects) {
+                    // For arrays of objects, displayValue already contains HTML
+                    html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
+                        <div class="${valueClass} flex-grow-1 fw-semibold" style="word-break: break-word; font-size: 0.85rem;">${displayValue}</div>
+                    </div>`;
+                } else if (isPermissionsArray) {
+                    // For permissions array, displayValue already contains HTML (badges)
+                    html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
+                        <div class="${valueClass} flex-grow-1" style="word-break: break-word;">${displayValue}</div>
+                    </div>`;
+                } else {
+                    html += `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background-color: #f8f9fa;">
+                        <span class="${valueClass} flex-grow-1 fw-semibold" style="word-break: break-word; font-size: 0.85rem;">${escapeHtml(String(displayValue))}</span>
+                    </div>`;
+                }
             }
 
             html += '</div>';

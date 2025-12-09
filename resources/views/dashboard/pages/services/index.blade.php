@@ -10,11 +10,9 @@
         </div>
         <div class="card-body">
             <div class="mb-3">
-                @if(auth('admin')->check() && auth('admin')->user()->can('services.create'))
                     <a href="{{ route('dashboard.services.create') }}" class="btn btn-primary" style="color: white;">
                         <i class="fa fa-plus"></i> إضافة خدمة
                     </a>
-                @endif
             </div>
 
             <div class="table-responsive">

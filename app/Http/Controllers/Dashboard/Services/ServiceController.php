@@ -48,13 +48,6 @@ class ServiceController extends Controller
                 ->addColumn('name', fn (Service $service) => '<span class="span_styles">' . e($service->name) . '</span>')
                 ->addColumn('description', fn (Service $service) => '<span class="span_styles">' . e($service->description ?? '-') . '</span>')
                 ->addColumn('status', function (Service $service) {
-                    $user = auth('admin')->user();
-
-                    // Only show toggle if user has update permission
-                    if (!$user->can('services.update')) {
-                        return '<span class="span_styles">' . ($service->is_active ? 'مفعل' : 'غير مفعل') . '</span>';
-                    }
-
                     $inputId = 'flexSwitchCheckChecked' . $service->id;
 
                     $form = '<form method="POST" action="' . e(route('dashboard.services.toggle-status', $service)) . '" style="display:inline;">'
@@ -68,22 +61,17 @@ class ServiceController extends Controller
                     return $form;
                 })
                 ->addColumn('actions', function (Service $service) {
-                    $user = auth('admin')->user();
                     $buttons = '<div class="btns-table">';
 
-                    if ($user->can('services.update')) {
-                        $buttons .= '<a href="' . e(route('dashboard.services.edit', $service)) . '" class="btn_styles amendment">
-                                        <i class="fa fa-edit"></i>
-                                        تعديل
-                                    </a>';
-                    }
+                    $buttons .= '<a href="' . e(route('dashboard.services.edit', $service)) . '" class="btn_styles amendment">
+                                    <i class="fa fa-edit"></i>
+                                    تعديل
+                                </a>';
 
-                    if ($user->can('services.delete')) {
-                        $buttons .= '<a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.services.destroy', $service)) . '" data-service-name="' . e($service->name) . '">
-                                        <i class="fa fa-trash"></i>
-                                        حذف
-                                    </a>';
-                    }
+                    $buttons .= '<a href="#" class="btn_styles delete_row" data-url="' . e(route('dashboard.services.destroy', $service)) . '" data-service-name="' . e($service->name) . '">
+                                    <i class="fa fa-trash"></i>
+                                    حذف
+                                </a>';
 
                     $buttons .= '</div>';
 
