@@ -8,13 +8,39 @@
             <div class="line-body"></div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="col-lg-3 col-md-3 col-sm-12">
                         <div class="mb-3 d-flex align-items-center gap-2 flex-wrap admin_slect">
-                            <select class="form-select form-select-solid" id="admin_filter" style="max-width: 200px;">
+                            <select class="form-select form-select-solid" id="admin_filter" style="max-width: 150px;">
                                 <option value="">جميع المشرفين</option>
                                 @foreach ($admins as $admin)
                                     <option value="{{ $admin->id }}">{{ $admin->name }} ({{ $admin->email }})</option>
                                 @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <div class="mb-3 d-flex align-items-center gap-2 flex-wrap admin_slect">
+                            <select class="form-select form-select-solid" id="action_filter" style="max-width: 150px;">
+                                <option value="">جميع الإجراءات</option>
+                                <option value="admin_created">إنشاء مشرف</option>
+                                <option value="admin_updated">تحديث مشرف</option>
+                                <option value="admin_deleted">حذف مشرف</option>
+                                <option value="admin_bulk_deleted">حذف جماعي للمشرفين</option>
+                                <option value="admin_status_toggled">تغيير حالة المشرف</option>
+                                <option value="admin_permissions_updated">تحديث صلاحية مشرف</option>
+                                <option value="city_created">إنشاء مدينة</option>
+                                <option value="city_updated">تحديث مدينة</option>
+                                <option value="city_deleted">حذف مدينة</option>
+                                <option value="city_status_toggled">تغيير حالة المدينة</option>
+                                <option value="service_created">إنشاء خدمة</option>
+                                <option value="service_updated">تحديث خدمة</option>
+                                <option value="service_deleted">حذف خدمة</option>
+                                <option value="service_status_toggled">تغيير حالة الخدمة</option>
+                                <option value="free_design_deleted">حذف تصميم مجاني</option>
+                                <option value="backup_deleted">حذف نسخة احتياطية</option>
+                                <option value="settings_updated">تحديث الإعدادات</option>
+                                <option value="social_media_settings_updated">تحديث إعدادات التواصل الاجتماعي</option>
+                                <option value="seo_settings_updated">تحديث إعدادات SEO</option>
                             </select>
                         </div>
                     </div>
