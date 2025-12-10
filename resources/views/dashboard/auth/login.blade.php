@@ -84,7 +84,7 @@
                 handleFormSubmission('#loginForm', {
                     successMessage: 'تم تسجيل الدخول بنجاح',
                     errorMessage: 'حدث خطأ أثناء تسجيل الدخول',
-                    redirectUrl: '{{ route('dashboard.dashboard') }}',
+                    redirectUrl: '{{ route('dashboard.welcome') }}',
                     redirectImmediately: true,
                 });
             } else {
