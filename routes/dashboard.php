@@ -37,8 +37,13 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::middleware('auth.admin')->group(function () {
         // Dashboard route
         Route::get('/', function () {
-            return redirect()->route('dashboard.free-designs.index');
+            return redirect()->route('dashboard.welcome');
         })->name('dashboard');
+
+        // Welcome route
+        Route::get('/welcome', function () {
+            return view('dashboard.pages.welcome');
+        })->name('welcome');
 
         // Profile routes
         Route::prefix('profile')->name('profile.')->group(function () {

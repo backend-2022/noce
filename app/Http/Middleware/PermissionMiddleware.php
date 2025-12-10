@@ -18,7 +18,7 @@ class PermissionMiddleware
         }
 
         if (!$user->can($permission)) {
-            abort(403, 'Unauthorized');
+            return redirect()->route('dashboard.welcome')->with('warning', 'ليس لديك صلاحية للوصول إلى هذه الصفحة');
         }
 
         return $next($request);
