@@ -56575,6 +56575,7 @@ div.dataTables_wrapper div.dataTables_filter label {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    filter: contrast(0.5)
 }
 
 .simplebar-content {
@@ -57348,6 +57349,10 @@ table.dataTable tfoot td {
     width: calc(100% - 620px);
 }
 
+.sidebar-link.sidebar-title.logout_bg img {
+    filter: unset !important;
+}
+
 .sidebar-link.sidebar-title.logout_bg:hover {
     background: red !important;
 }
@@ -57633,7 +57638,7 @@ input[type=number]::-webkit-outer-spin-button {
     overflow: hidden;
 }
 
-.admin_slect .form-select.form-select-solid{
+.admin_slect .form-select.form-select-solid {
     max-width: 100% !important;
 }
 
@@ -57642,6 +57647,11 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 5px 10px 5px 5px;
 }
 
+.view-log-btn .fa.fa-eye {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 /* end updates */
 
