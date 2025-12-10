@@ -75,6 +75,11 @@ class AdminAuthController extends Controller
 
     public function logout(Request $request)
     {
+        // If user is not logged in, redirect to login
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->route('dashboard.login');
+        }
+
         Auth::guard('admin')->logout();
 
         $request->session()->invalidate();
