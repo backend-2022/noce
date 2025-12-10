@@ -161,7 +161,9 @@ class AdminController extends Controller
 
         try {
             $data = $request->validated();
-            $data['is_active'] = $request->has('is_active') ? true : false;
+
+            // Handle is_active checkbox - checkbox sends value when checked, nothing when unchecked
+            $data['is_active'] = (bool) $request->input('is_active', false);
 
             // Handle image upload
             if ($request->hasFile('image')) {
@@ -175,18 +177,14 @@ class AdminController extends Controller
                 $data['image'] = $path;
             }
 
-            // Handle password update - only remove if not provided or empty after trimming
-            if (isset($data['password'])) {
-                $password = trim($data['password']);
-                if (empty($password)) {
-                    unset($data['password']);
-                    unset($data['password_confirmation']);
-                } else {
-                    // Ensure password is kept in data for hashing in repository
-                    $data['password'] = $password;
-                }
+            // Handle password update - password is already normalized to null if empty in prepareForValidation
+            if (!isset($data['password']) || $data['password'] === null || empty(trim($data['password']))) {
+                // Remove password fields if not provided, null, or empty
+                unset($data['password']);
+                unset($data['password_confirmation']);
             } else {
-                // Password not in request, remove confirmation if present
+                // Password is provided and not empty, keep it for hashing
+                // Remove password_confirmation as it's only for validation
                 unset($data['password_confirmation']);
             }
 

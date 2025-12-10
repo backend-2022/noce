@@ -32,6 +32,10 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login']);
 
+    // Logout route (redirects to login if not logged in) - supports both GET and POST
+    Route::get('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+    Route::post('/logout', [AdminAuthController::class, 'logout']);
+
     // Authenticated routes (for logged in users)
     Route::middleware('auth.admin')->group(function () {
         // Dashboard route
@@ -49,9 +53,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('/', [ProfileController::class, 'index'])->name('index');
             Route::put('/', [ProfileController::class, 'update'])->name('update');
         });
-
-        // Logout route
-        Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
         // Cities Routes
         Route::middleware('permission:cities.view')->group(function () {

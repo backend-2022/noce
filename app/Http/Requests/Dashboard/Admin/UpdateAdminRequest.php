@@ -13,6 +13,18 @@ class UpdateAdminRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        // Convert empty password strings to null so they are treated as not provided
+        if ($this->has('password') && trim($this->input('password')) === '') {
+            $this->merge(['password' => null]);
+        }
+
+        if ($this->has('password_confirmation') && trim($this->input('password_confirmation')) === '') {
+            $this->merge(['password_confirmation' => null]);
+        }
+    }
+
     public function rules(): array
     {
         $adminId = $this->route('admin')->id;
@@ -20,10 +32,10 @@ class UpdateAdminRequest extends FormRequest
         return [
             'name' => InputEnum::TITLE->getValidationRules(). '|regex:/^[\p{Arabic}a-zA-Z0-9\s]+$/u', //  only letters, numbers and spaces and arabic letters and english letters
             'email' => InputEnum::EMAIL->getValidationRules() . '|unique:admins,email,' . $adminId,
-            'password' => InputEnum::PASSWORD->getValidationRules(false),
+            'password' => 'sometimes|' . InputEnum::PASSWORD->getValidationRules(false),
             'password_confirmation' => 'required_with:password|' . InputEnum::PASSWORD->getValidationRules(false) . '|same:password',
             'image' => 'nullable|' . ImageMimesValidationEnum::validationRule(),
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 
