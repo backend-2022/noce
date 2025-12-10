@@ -69,7 +69,7 @@
 
     <!-- Log Details Modal -->
     <div class="modal fade" id="logDetailsModal" tabindex="-1" aria-labelledby="logDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg  modal-dialog-centered">
             <div class="modal-content" dir="rtl">
                 <div class="modal-header">
                     <h5 class="modal-title" id="logDetailsModalLabel">تفاصيل السجل</h5>
@@ -630,9 +630,9 @@
             if (action) {
                 const hasArabic = containsArabic(action);
                 const fixedValue = hasArabic ? fixArabicDirection(action) : action;
-                html += '<div dir="rtl" style="margin-bottom: 12px; padding: 12px; background-color: #f8f9fa; border-radius: 4px; text-align: right;">';
+                html += '<div dir="rtl" style="margin-bottom: 12px; padding: 12px; background-color: #f8f9fa; border-radius: 4px; text-align: center;">';
                 if (hasArabic) {
-                    html += '<span dir="rtl" style="color: #333; font-size: 1rem; font-weight: 500; unicode-bidi: embed; direction: rtl; text-align: right; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
+                    html += '<span dir="rtl" style="color: #333; font-size: 1rem; font-weight: 500; unicode-bidi: embed; direction: rtl; text-align: center; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
                 } else {
                     html += '<span dir="ltr" style="color: #333; font-size: 1rem; font-weight: 500; unicode-bidi: embed; direction: ltr; text-align: left; display: inline-block;">' + escapeHtml(fixedValue) + '</span>';
                 }
@@ -646,10 +646,10 @@
             if (ipAddress) secondRowValues.push(escapeHtml(String(ipAddress)));
 
             if (secondRowValues.length > 0) {
-                html += '<div dir="rtl" style="margin-bottom: 12px; padding: 12px; background-color: #f8f9fa; border-radius: 4px; text-align: right;">';
+                html += '<div dir="rtl" style="margin-bottom: 12px; padding: 12px; background-color: #f8f9fa; border-radius: 4px; text-align: center;">';
                 html += '<div style="display: flex; flex-direction: column; gap: 6px;">';
                 secondRowValues.forEach(value => {
-                    html += '<span dir="rtl" style="color: #666; font-size: 0.9rem; text-align: right;">' + value + '</span>';
+                    html += '<span dir="rtl" style="color: #666; font-size: 0.9rem; text-align: center;">' + value + '</span>';
                 });
                 html += '</div>';
                 html += '</div>';

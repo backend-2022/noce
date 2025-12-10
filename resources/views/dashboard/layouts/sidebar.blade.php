@@ -45,7 +45,7 @@
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.services.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.services.') }}" href="{{ route('dashboard.services.index') }}">
                             <div class="img_div">
-                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/8.png') }}" alt="">
                             </div>
                             <span class="hide_span">إدارة الخدمات</span>
                         </a>
@@ -69,7 +69,7 @@
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.admins.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.admins.') }}" href="{{ route('dashboard.admins.index') }}">
                             <div class="img_div">
-                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/6.png') }}" alt="">
                             </div>
                             <span class="hide_span">إدارة المشرفين</span>
                         </a>
@@ -81,7 +81,7 @@
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.admin-permissions.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.admin-permissions.') }}" href="{{ route('dashboard.admin-permissions.index') }}">
                             <div class="img_div">
-                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/7.png') }}" alt="">
                             </div>
                             <span class="hide_span">إدارة الصلاحيات</span>
                         </a>
@@ -93,7 +93,7 @@
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.backups.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.backups.') }}" href="{{ route('dashboard.backups.index') }}">
                             <div class="img_div">
-                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/9.png') }}" alt="">
                             </div>
                             <span class="hide_span">النسخ الاحتياطية</span>
                         </a>
@@ -105,7 +105,7 @@
                     <li class="sidebar-list {{ isActiveRouteGroup('dashboard.activity-logs.') }}">
                         <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.activity-logs.') }}" href="{{ route('dashboard.activity-logs.index') }}">
                             <div class="img_div">
-                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/2.png') }}" alt="">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/10.png') }}" alt="">
                             </div>
                             <span class="hide_span">سجل النشاطات</span>
                         </a>
