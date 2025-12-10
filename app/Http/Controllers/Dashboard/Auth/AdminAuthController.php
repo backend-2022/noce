@@ -14,7 +14,7 @@ class AdminAuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::guard('admin')->check()) {
-            return redirect()->route('dashboard.dashboard');
+            return redirect()->route('dashboard.welcome');
         }
 
         return view('dashboard.auth.login');
@@ -51,11 +51,11 @@ class AdminAuthController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'مرحباً بك ' . $admin->name,
-                    'redirect' => route('dashboard.dashboard')
+                    'redirect' => route('dashboard.welcome')
                 ]);
             }
 
-            return redirect()->intended(route('dashboard.dashboard'))
+            return redirect()->intended(route('dashboard.welcome'))
                 ->with('success', 'مرحباً بك ' . $admin->name);
         }
 
