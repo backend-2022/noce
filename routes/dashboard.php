@@ -1,16 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Dashboard\Auth\AdminAuthController;
-use App\Http\Controllers\Dashboard\Setting\SettingController;
-use App\Http\Controllers\Dashboard\Profile\ProfileController;
-use App\Http\Controllers\Dashboard\Admins\AdminController;
-use App\Http\Controllers\Dashboard\Cities\CityController;
-use App\Http\Controllers\Dashboard\Services\ServiceController;
-use App\Http\Controllers\Dashboard\FreeDesigns\FreeDesignController;
-use App\Http\Controllers\Dashboard\Backups\BackupController;
 use App\Http\Controllers\Dashboard\ActivityLogs\ActivityLogController;
 use App\Http\Controllers\Dashboard\AdminPermissions\AdminPermissionController;
+use App\Http\Controllers\Dashboard\Admins\AdminController;
+use App\Http\Controllers\Dashboard\Auth\AdminAuthController;
+use App\Http\Controllers\Dashboard\Backups\BackupController;
+use App\Http\Controllers\Dashboard\Cities\CityController;
+use App\Http\Controllers\Dashboard\FreeDesigns\FreeDesignController;
+use App\Http\Controllers\Dashboard\Profile\ProfileController;
+use App\Http\Controllers\Dashboard\Services\ServiceController;
+use App\Http\Controllers\Dashboard\Setting\SettingController;
+use Illuminate\Support\Facades\Route;
+
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     // Phone Codes Route (public - no authentication required)
     Route::get('/phone-codes', function () {
@@ -27,11 +28,9 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             ->header('Access-Control-Allow-Headers', 'Content-Type');
     })->name('phone-codes');
 
-    // Guest routes (for non-authenticated users)
-    Route::middleware('guest:admin')->group(function () {
-        Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-        Route::post('/login', [AdminAuthController::class, 'login']);
-    });
+    // Authentication routes (login accessible to all)
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'login']);
 
     // Authenticated routes (for logged in users)
     Route::middleware('auth.admin')->group(function () {
@@ -53,7 +52,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
         // Logout route
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
-
 
         // Cities Routes
         Route::middleware('permission:cities.view')->group(function () {
