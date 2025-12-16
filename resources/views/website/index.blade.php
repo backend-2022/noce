@@ -1,7 +1,17 @@
 @extends('website.layouts.app')
 
 @section('content')
-    <section class="hero" style="background-image: url('{{ setting('home_banner') ? getFileFullUrl(setting('home_banner'), null, 'public', '4b0065eb-0c8d-4724-bb21-964abeca1e30.webp') : asset('assets/website/defaults/4b0065eb-0c8d-4724-bb21-964abeca1e30.webp') }}');">
+    @php
+        $homeBannerUrl = asset('assets/website/defaults/4b0065eb-0c8d-4724-bb21-964abeca1e30.webp');
+        if (setting('home_banner')) {
+            $bannerUrl = getFileFullUrl(setting('home_banner'), null, 'public');
+            // Only use the banner URL if it's not the default dashboard fallback
+            if ($bannerUrl && !str_contains($bannerUrl, 'assets/dashboard/defaults/')) {
+                $homeBannerUrl = $bannerUrl;
+            }
+        }
+    @endphp
+    <section class="hero" style="background-image: url('{{ $homeBannerUrl }}');">
         <div class="hero-content fade-in">
             <div class="contetn_hero">
                 <h1>{{ setting('promotional_title') ?? 'صمم مساحتك معانا' }}</h1>
