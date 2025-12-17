@@ -71,7 +71,7 @@
 
             var filterOptions = utmSources.map(function(item) {
                 var boldCount = toBoldNumber(item.count);
-                return '<option value="' + item.source + '">زيارة (' + boldCount + ') ' + item.source + '</option>';
+                return '<option value="' + item.source + '">' + item.source + ' ( ' + boldCount + ' زيارة ) </option>';
             }).join('');
 
             var filterHtml = '<select class="form-select form-select-solid" id="utm_source_filter" style="max-width: 200px; margin-left: 10px; height: 32px; border-radius: 50px; border: 1px solid #C7C7CC; padding: 0 15px 0 40px; font-family: \'IBM Plex Sans Arabic\', sans-serif; font-size: 14px; background-image: url(\'data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\'%3E%3Cpath fill=\'none\' stroke=\'%23343a40\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M2 5l6 6 6-6\'/%3E%3C/svg%3E\'); background-repeat: no-repeat; background-position: left 15px center; background-size: 16px 12px; cursor: pointer; outline: none; -webkit-appearance: none; -moz-appearance: none; appearance: none;">' +
