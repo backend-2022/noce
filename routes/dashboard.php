@@ -10,6 +10,7 @@ use App\Http\Controllers\Dashboard\FreeDesigns\FreeDesignController;
 use App\Http\Controllers\Dashboard\Profile\ProfileController;
 use App\Http\Controllers\Dashboard\Services\ServiceController;
 use App\Http\Controllers\Dashboard\Setting\SettingController;
+use App\Http\Controllers\Dashboard\Utms\UtmController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
@@ -104,6 +105,12 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         // Activity Logs Routes
         Route::middleware('permission:activity-logs.view')->group(function () {
             Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        });
+
+        // UTMs Routes
+        Route::middleware('permission:utms.view')->group(function () {
+            Route::get('utms', [UtmController::class, 'index'])->name('utms.index');
+            Route::delete('utms/{utm}', [UtmController::class, 'destroy'])->name('utms.destroy');
         });
 
         // Admin Permissions Routes

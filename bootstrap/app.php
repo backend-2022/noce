@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.admin' => \App\Http\Middleware\AuthenticateAdmin::class,
             'api.key' => \App\Http\Middleware\ApiKeyMiddleware::class,
             'permission' => \App\Http\Middleware\PermissionMiddleware::class,
+            'capture.utm' => \App\Http\Middleware\CaptureUtmFromUrl::class,
         ]);
         $middleware->redirectGuestsTo(function ($request) {
             if ($request->is('api/*')) {
