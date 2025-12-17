@@ -114,6 +114,7 @@ class AdminPermissionController extends Controller
             'backup',
             'settings',
             'permissions',
+            'utms',
         ];
 
         // Group permissions by module

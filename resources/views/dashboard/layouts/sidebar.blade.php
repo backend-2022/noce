@@ -113,6 +113,18 @@
                     </li>
                     @endif
 
+                    @if(auth('admin')->check() && auth('admin')->user()->can('utms.view'))
+                    <li class="sidebar-list {{ isActiveRouteGroup('dashboard.utms.') }}">
+                        <a class="sidebar-link sidebar-title link-nav {{ isActiveRouteGroup('dashboard.utms.') }}" href="{{ route('dashboard.utms.index') }}">
+                            <div class="img_div">
+                                <img class="img_color" src="{{ asset('assets/dashboard/images/MyPhotoes/10.png') }}" alt="">
+                            </div>
+                            <span class="hide_span">إدارة مصادر الزيارات</span>
+                        </a>
+
+                    </li>
+                    @endif
+
                 </div>
 
 

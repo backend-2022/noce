@@ -23,6 +23,7 @@
                                             'backup' => 'النسخ الاحتياطي',
                                             'settings' => 'الإعدادات',
                                             'permissions' => 'الصلاحيات',
+                                            'utms' => 'إدارة مصادر الزيارات',
                                         ];
                                         $moduleName = $moduleNames[$module] ?? $module;
 
