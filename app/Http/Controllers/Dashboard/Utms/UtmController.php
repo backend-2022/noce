@@ -71,12 +71,19 @@ class UtmController extends Controller
                 ->make(true);
         }
 
-        // Get unique utm_source values for filter dropdown
+        // Get unique utm_source values with count for filter dropdown
         $utmSources = Utm::whereNotNull('utm_source')
             ->where('utm_source', '!=', '')
-            ->distinct()
+            ->selectRaw('utm_source, COUNT(*) as count')
+            ->groupBy('utm_source')
             ->orderBy('utm_source')
-            ->pluck('utm_source')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'source' => $item->utm_source,
+                    'count' => $item->count
+                ];
+            })
             ->toArray();
 
         return view('dashboard.pages.utms.index', compact('utmSources'));
